@@ -374,7 +374,7 @@
 
 .pipeline {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 14px;
   margin: 0;
   padding: 0;
@@ -412,9 +412,120 @@
   color: var(--site-ink);
 }
 
+/* 每步的产物，是这一步的交付定义 */
+.stepOutput {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+
 .stepDesc {
   font-size: 0.8125rem;
   line-height: 1.6;
+  color: var(--site-muted);
+}
+
+/* ---------- 核心能力 ---------- */
+
+.capGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.capCard {
+  padding: 28px 26px;
+  border: 0.5px solid var(--site-rule);
+  border-radius: 18px;
+  background: var(--site-panel);
+  text-decoration: none;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.capCard:hover {
+  border-color: var(--ifm-color-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+  text-decoration: none;
+}
+
+.capTitle {
+  margin: 0 0 10px;
+  font-size: 1.1875rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--site-ink);
+}
+
+.capDesc {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--site-muted);
+}
+
+/* ---------- 数据集 ---------- */
+
+.datasetGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+.datasetCard {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 30px;
+  border: 0.5px solid var(--site-rule);
+  border-radius: 22px;
+  background: var(--site-panel);
+  text-decoration: none;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.datasetCard:hover {
+  border-color: var(--ifm-color-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+  text-decoration: none;
+}
+
+.datasetName {
+  margin: 0 0 22px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--site-ink);
+}
+
+.statRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 36px;
+  margin-bottom: 20px;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statNum {
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--ifm-color-primary);
+}
+
+.statLabel {
+  font-size: 0.8125rem;
+  color: var(--site-muted);
+}
+
+.datasetDesc {
+  margin: 0;
+  font-size: 0.9375rem;
   color: var(--site-muted);
 }
 
@@ -513,6 +624,12 @@
     grid-template-columns: repeat(2, 1fr);
   }
   .practiceGrid {
+    grid-template-columns: 1fr;
+  }
+  .capGrid {
+    grid-template-columns: 1fr;
+  }
+  .datasetGrid {
     grid-template-columns: 1fr;
   }
 }

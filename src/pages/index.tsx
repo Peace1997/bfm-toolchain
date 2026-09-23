@@ -8,102 +8,144 @@ import styles from './index.module.css';
 // 需跟 docusaurus.config.ts 顶部的 GITHUB_ORG / REPO_NAME 保持一致
 const REPO_URL = 'https://github.com/Peace1997/bfm-toolchain';
 
-/** 工具链四大板块，对应顶栏的四个文档入口 */
+/** 四大板块，对应官方材料里的四个能力方向 */
 const PILLARS = [
   {
-    title: 'BFM 模型',
-    hook: '先理解，小脑如何决策。',
-    desc: '模型结构、观测与动作空间、能力边界与版本管理，先建立对 BFM 的准确预期。',
-    tags: ['模型结构', '输入输出', '能力边界'],
-    cta: '了解 BFM',
+    title: '通用运控基模',
+    hook: '一个模型，覆盖多种动作。',
+    desc: '零门槛基模动作库，一键部署使用。不必为每个动作单独建模调参，全身运控开箱即用。',
+    tags: ['基模动作库', '一键部署', '全身运控'],
+    cta: '了解基模',
     to: '/docs/bfm/intro',
     accent: 'model' as const,
   },
   {
-    title: '模型部署',
-    hook: '把策略，放到机器人上。',
-    desc: '推理运行时、仿真与真机部署路径、控制频率与时延调优，以及必须守住的安全边界。',
-    tags: ['推理运行时', '仿真部署', '真机部署'],
-    cta: '查看部署指南',
-    to: '/docs/deployment/intro',
+    title: '全身遥操系统',
+    hook: '复杂场景，全身动作实时跟随。',
+    desc: '全身多关节动态协调，动作姿态自适应跟踪；低时延遥操示范，无需额外训练即可实时复制动作。',
+    tags: ['全姿态跟踪', '免训练学习', '低时延'],
+    cta: '查看遥操系统',
+    to: '/docs/practices/teleoperation',
     accent: 'real' as const,
   },
   {
-    title: '数据集',
-    hook: '把数据，整理成能训的样子。',
-    desc: '统一的数据格式约定、遥操作采集流程、清洗与时间对齐，以及现有数据集清单。',
-    tags: ['数据格式', '遥操作采集', '清洗对齐'],
+    title: '整机数采训练',
+    hook: '四步打通数据采集到真机作业。',
+    desc: '采集、处理、训练、部署串成一条链路，从数据到模型再到真机部署，驱动基模实现自主作业。',
+    tags: ['任务示范数据', '端到端训练', '真机验证'],
+    cta: '开始数采训练',
+    to: '/docs/post-training/intro',
+    accent: 'primary' as const,
+  },
+  {
+    title: '开源真机数据集',
+    hook: '海量全身动作与操作任务数据。',
+    desc: 'OpenLET 小脑动作数据集，以及覆盖快递分拣、台面清理等场景的全身协同任务数据集。',
+    tags: ['小脑动作', '全身协同', '真机采集'],
     cta: '浏览数据集',
     to: '/docs/datasets/intro',
     accent: 'sim' as const,
   },
-  {
-    title: '技能后训练',
-    hook: '在 BFM 之上，长出新技能。',
-    desc: '从预训练模型出发做微调与强化学习，用统一评测集验证效果，再交付到 sim2real。',
-    tags: ['微调', '强化学习', '评测回归'],
-    cta: '开始后训练',
-    to: '/docs/post-training/intro',
-    accent: 'primary' as const,
-  },
 ];
 
-/** 标准流水线：每个技能都走这五步 */
+/**
+ * 整机数采训练的四步。
+ * 注意是四步不是五步 —— 以官方材料口径为准，「评测」并入训练环节。
+ */
 const PIPELINE = [
   {
-    step: '01',
+    step: '1',
     title: '采集',
-    desc: '遥操作或脚本采集原始轨迹',
+    output: '任务示范数据',
+    desc: '全身遥操作，采集协同作业过程',
     to: '/docs/datasets/collection',
   },
   {
-    step: '02',
+    step: '2',
     title: '处理',
-    desc: '清洗、对齐、转成统一格式',
+    output: '可训练数据',
+    desc: '自动化清洗与标注，输出标准可训练数据',
     to: '/docs/datasets/processing',
   },
   {
-    step: '03',
-    title: '后训练',
-    desc: '在 BFM 上微调或强化学习',
+    step: '3',
+    title: '训练',
+    output: '操作技能模型',
+    desc: '端到端模型训练，训练数据实时查看',
     to: '/docs/post-training/pipeline',
   },
   {
-    step: '04',
-    title: '评测',
-    desc: '仿真评测集上跑回归',
-    to: '/docs/post-training/evaluation',
+    step: '4',
+    title: '部署',
+    output: '真机作业验证',
+    desc: '全身操作模型，实现全自主作业',
+    to: '/docs/deployment/intro',
+  },
+];
+
+/** 核心能力亮点 */
+const CAPABILITIES = [
+  {
+    title: '零门槛基模动作库',
+    desc: '一键部署使用，转身、连续动作等开箱即用。',
+    to: '/docs/bfm/capabilities',
   },
   {
-    step: '05',
-    title: '部署',
-    desc: '导出策略，上仿真再上真机',
-    to: '/docs/deployment/intro',
+    title: '全姿态动作跟踪',
+    desc: '全身多关节动态协调，动作姿态自适应跟踪。',
+    to: '/docs/practices/teleoperation',
+  },
+  {
+    title: '免训练动作学习',
+    desc: '低时延遥操示范，无需额外训练实时复制动作。',
+    to: '/docs/practices/teleoperation',
+  },
+];
+
+/**
+ * 数据集规模。
+ * TODO(待核实): 数字取自官方宣传材料，发布前请与正式公告核对。
+ */
+const DATASETS = [
+  {
+    name: 'OpenLET 小脑动作数据集',
+    stats: [
+      {num: '800+', label: '动作类别'},
+      {num: '39692', label: '条动作数据'},
+    ],
+    desc: '覆盖全身动作的小脑运控数据。',
+    to: '/docs/datasets/registry',
+  },
+  {
+    name: '全身协同场景任务数据集',
+    stats: [{num: '多场景', label: '真机任务'}],
+    desc: '覆盖快递分拣、台面清理等多种全身协同场景任务。',
+    to: '/docs/datasets/registry',
   },
 ];
 
 /** 技能实践。TODO(待补充): 每条补上真实的效果视频/截图与指标 */
 const PRACTICES = [
   {
-    kicker: '运动控制 / 全身',
-    title: '行走与平衡',
-    desc: '基础步态、变速转向，以及受扰动后的恢复策略。',
+    kicker: '基模动作 / 全身运控',
+    title: '行走与转身',
+    desc: '基础步态、转身与连续动作，直接调用基模动作库。',
     meta: '仿真 · 真机',
     to: '/docs/practices/locomotion',
   },
   {
-    kicker: '操作 / 模仿学习',
-    title: '上肢操作',
-    desc: '抓取、放置与交接，从演示数据到可复现的操作策略。',
-    meta: '仿真 · 真机',
-    to: '/docs/practices/manipulation',
-  },
-  {
-    kicker: '数据 / 人机交互',
-    title: '遥操作采集',
-    desc: '搭好遥操作链路，把人的示范变成可训练的数据。',
+    kicker: '遥操示范 / 免训练',
+    title: '太极动作学习',
+    desc: '通过遥操示范实时复制复杂连续动作，无需额外训练。',
     meta: '真机',
     to: '/docs/practices/teleoperation',
+  },
+  {
+    kicker: '全身协同 / 端到端',
+    title: '快递分拣与台面清理',
+    desc: '从任务示范数据训练操作技能模型，验证全自主作业。',
+    meta: '真机',
+    to: '/docs/practices/whole-body',
   },
 ];
 
@@ -116,26 +158,26 @@ function Hero() {
       <div className={styles.heroVeil} aria-hidden="true" />
 
       <div className={styles.sceneLabel}>
-        <span>数据</span>
+        <span>遥操数采</span>
         <span className={styles.arrow}>→</span>
-        <span>后训练</span>
+        <span>技能训练</span>
         <span className={styles.arrow}>→</span>
-        <span>部署</span>
+        <span>真机部署</span>
       </div>
 
       <div className={styles.heroContent}>
         <p className={styles.kicker}>
-          <Link to="/docs/overview/intro">Behavior Foundation Model</Link>
+          <Link to="/docs/overview/intro">通用小脑运控基座模型</Link>
         </p>
         <h1 className={styles.heroTitle}>
-          让机器人，
+          全身运控，
           <br />
-          学会新技能。
+          开箱即用。
         </h1>
         <p className={styles.heroSubtitle}>
-          BFMTools 把数据采集、技能后训练与模型部署接成一条流水线。
+          打通全身遥操数采、技能模型训练与部署，降低动作开发门槛。
           <br />
-          从一段遥操作演示开始，在仿真里验证，再走到真机。
+          一个模型覆盖多种动作，从一段遥操示范走到真机自主作业。
         </p>
 
         <div className={styles.heroActions}>
@@ -148,16 +190,16 @@ function Hero() {
         </div>
 
         <ul className={styles.chips}>
-          <li>统一数据格式</li>
-          <li>可复现流水线</li>
-          <li>仿真到真机</li>
+          <li>零门槛动作库</li>
+          <li>免训练遥操</li>
+          <li>开源真机数据集</li>
         </ul>
       </div>
 
       <Link className={styles.spotlight} to="/docs/quickstart/first-rollout">
         <span className={styles.spotlightKicker}>从这里开始第一次实验</span>
-        <span className={styles.spotlightTitle}>在仿真里跑通一个 BFM 策略</span>
-        <span className={styles.spotlightMeta}>MuJoCo 仿真 · 约 10 分钟</span>
+        <span className={styles.spotlightTitle}>一键部署一个基模动作</span>
+        <span className={styles.spotlightMeta}>仿真验证 · 约 10 分钟</span>
       </Link>
 
       <a className={styles.scrollCue} href="#pillars">
@@ -172,10 +214,10 @@ function Pillars() {
     <section className={styles.section} id="pillars">
       <div className={styles.container}>
         <div className={styles.sectionHead}>
-          <p className={styles.sectionKicker}>工具链</p>
-          <h2 className={styles.sectionTitle}>从一条数据，到一个技能。</h2>
+          <p className={styles.sectionKicker}>四大能力</p>
+          <h2 className={styles.sectionTitle}>从基座模型，到真机作业。</h2>
           <p className={styles.sectionLead}>
-            四个板块各管一段，合起来是一条完整的技能生产线。
+            四个板块各管一段，合起来打通全身遥操数采、技能模型训练与部署。
           </p>
         </div>
 
@@ -210,10 +252,10 @@ function Pipeline() {
     <section className={`${styles.section} ${styles.sectionAlt}`}>
       <div className={styles.container}>
         <div className={styles.sectionHead}>
-          <p className={styles.sectionKicker}>标准流程</p>
-          <h2 className={styles.sectionTitle}>每个技能，都走同一条路。</h2>
+          <p className={styles.sectionKicker}>整机数采训练</p>
+          <h2 className={styles.sectionTitle}>四步打通数据采集到真机作业。</h2>
           <p className={styles.sectionLead}>
-            流程固定下来，结果才可复现、可比较、可交接。
+            快速上手从数据到模型真机部署，驱动基模实现自主作业。
           </p>
         </div>
 
@@ -223,11 +265,67 @@ function Pipeline() {
               <Link to={s.to} className={styles.stepCard}>
                 <span className={styles.stepNum}>{s.step}</span>
                 <span className={styles.stepTitle}>{s.title}</span>
+                <span className={styles.stepOutput}>{s.output}</span>
                 <span className={styles.stepDesc}>{s.desc}</span>
               </Link>
             </li>
           ))}
         </ol>
+      </div>
+    </section>
+  );
+}
+
+function Capabilities() {
+  return (
+    <section className={styles.section}>
+      <div className={styles.container}>
+        <div className={styles.sectionHead}>
+          <p className={styles.sectionKicker}>核心能力</p>
+          <h2 className={styles.sectionTitle}>降低动作开发门槛。</h2>
+          <p className={styles.sectionLead}>
+            不必为每个动作单独建模调参，也不必为每次示范单独训练。
+          </p>
+        </div>
+
+        <div className={styles.capGrid}>
+          {CAPABILITIES.map((c) => (
+            <Link key={c.title} to={c.to} className={styles.capCard}>
+              <h3 className={styles.capTitle}>{c.title}</h3>
+              <p className={styles.capDesc}>{c.desc}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Datasets() {
+  return (
+    <section className={`${styles.section} ${styles.sectionAlt}`}>
+      <div className={styles.container}>
+        <div className={styles.sectionHead}>
+          <p className={styles.sectionKicker}>开源真机数据集</p>
+          <h2 className={styles.sectionTitle}>海量全身动作与操作任务数据。</h2>
+        </div>
+
+        <div className={styles.datasetGrid}>
+          {DATASETS.map((d) => (
+            <Link key={d.name} to={d.to} className={styles.datasetCard}>
+              <h3 className={styles.datasetName}>{d.name}</h3>
+              <div className={styles.statRow}>
+                {d.stats.map((s) => (
+                  <div key={s.label} className={styles.statItem}>
+                    <span className={styles.statNum}>{s.num}</span>
+                    <span className={styles.statLabel}>{s.label}</span>
+                  </div>
+                ))}
+              </div>
+              <p className={styles.datasetDesc}>{d.desc}</p>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -294,6 +392,8 @@ export default function Home(): ReactNode {
       <main>
         <Pillars />
         <Pipeline />
+        <Capabilities />
+        <Datasets />
         <Practices />
         <Community />
       </main>

@@ -16,7 +16,7 @@ const REPO_URL = `https://github.com/${GITHUB_ORG}/${REPO_NAME}`;
 const config: Config = {
   // TODO: 名称暂定 BFMTools，确定后仓库名与 baseUrl 一并调整
   title: 'BFMTools',
-  tagline: '部署 BFM，组织数据，训练技能。',
+  tagline: '全身运控开箱即用，打通全身遥操数采、技能模型训练与部署。',
   favicon: 'img/favicon.ico',
 
   url: SITE_URL,
@@ -60,7 +60,7 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'img/social-card.jpg',
+    image: 'img/release/model.jpg',
     // 白底单一形态，与 LeTools 一致。要恢复深色切换把 disableSwitch 去掉即可
     colorMode: {
       defaultMode: 'light',
@@ -75,11 +75,7 @@ const config: Config = {
       },
       items: [
         {to: '/', label: '首页', position: 'left', activeBaseRegex: '^/[^/]*/?$'},
-        {type: 'docSidebar', sidebarId: 'quickstart', position: 'left', label: '快速开始'},
-        {type: 'docSidebar', sidebarId: 'bfm', position: 'left', label: 'BFM 模型'},
-        {type: 'docSidebar', sidebarId: 'toolchain', position: 'left', label: '工具链'},
-        {type: 'docSidebar', sidebarId: 'practices', position: 'left', label: '技能实践'},
-        {type: 'docSidebar', sidebarId: 'reference', position: 'left', label: '参考'},
+        {type: 'docSidebar', sidebarId: 'quickstart', position: 'left', label: '技术文档'},
         {href: REPO_URL, label: 'GitHub', position: 'right'},
       ],
     },

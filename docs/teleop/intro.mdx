@@ -18,9 +18,18 @@ description: 全身遥操系统的组成、能力与适用场景。
 
 ## 两项核心能力
 
-**全姿态动作跟踪** —— 全身多关节动态协调，动作姿态自适应跟踪。覆盖行走、小跑、快速横移，以及伸展、弯腰、下蹲等躯干与关节协同动作。详见 [全姿态动作跟踪](/docs/teleop/tracking)。
+**全姿态动作跟踪** —— 全身多关节动态协调，动作姿态自适应跟踪。覆盖行走、小跑、快速横移，以及伸展、弯腰、下蹲等躯干与关节协同动作。
 
-**免训练动作学习** —— 低时延遥操示范，无需额外训练即可实时复制动作。连太极这类复杂连续动作也能即时跟随。详见 [免训练动作学习](/docs/teleop/imitation)。
+**免训练动作学习** —— 低时延遥操示范，无需额外训练即可实时复制动作。连太极这类复杂连续动作也能即时跟随。
+
+## 两套方案
+
+| 方案 | 设备 | 文档 |
+| --- | --- | --- |
+| PICO | PICO 头戴 + 手柄 + 足部绑带 | [PICO 遥操作](/docs/teleop/pico) |
+| Xsens | Xsens 动捕服 + 上位机 | [Xsens 遥操作](/docs/teleop/xsens) |
+
+两者共用同一套代码环境，先完成 [环境配置](/docs/teleop/setup) 再选一条走。
 
 ## 在工具链里的位置
 
@@ -39,7 +48,7 @@ flowchart LR
 
 ## 接下来
 
-- 先搭环境 → [设备与标定](/docs/teleop/setup)
-- 了解跟踪能力 → [全姿态动作跟踪](/docs/teleop/tracking)
-- 了解免训练复制 → [免训练动作学习](/docs/teleop/imitation)
+- 先搭环境 → [环境配置](/docs/teleop/setup)
+- 用 PICO 遥操 → [PICO 遥操作](/docs/teleop/pico)
+- 用 Xsens 遥操 → [Xsens 遥操作](/docs/teleop/xsens)
 - 用它采数据 → [01 采集](/docs/training/collect)

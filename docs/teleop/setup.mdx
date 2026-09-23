@@ -1,33 +1,139 @@
 ---
-sidebar_position: 4
-title: 设备与标定
-description: 遥操作链路的硬件组成、接线与标定流程。
+sidebar_position: 2
+title: 环境配置
+description: 遥操作前的物料准备、软件安装、网络配置与代码编译。
 ---
 
-# 设备与标定
+# 环境配置
 
-遥操作链路的硬件组成、接线与标定流程。
+PICO 与 Xsens 两套方案共用同一套代码环境，先完成这一页再去对应的操作页。
+
+## 物料准备
+
+### PICO 方案
+
+| 物料 | 数量 | 用途 |
+| --- | --- | --- |
+| PICO 头戴 + 左右手手柄 + 左右脚绑带 | 1 | PICO 遥操作 |
+| **网线（5 米以上，必备）** | 1 | 连接机器人背后网口与 PICO 头戴 |
+| 北通手柄 | 1 | 控制机器人站立、切换控制器 |
+| **充电宝（必备）** | 1 | 遥操过程中持续给 PICO 供电，保证原始数据质量 |
+| 网口转 Type-C 拓展坞 | 1 | 网线转 Type-C，同时充当充电接口 |
+| USB 转网口拓展坞 | 1 | 从机器人接网线到 PICO |
+
+:::warning 供电与有线连接直接影响数据质量
+无充电宝、或未使用有线连接，都会影响 PICO 原始数据质量。
+:::
+
+### Xsens 方案
+
+| 物料 | 数量 | 用途 | 备注 |
+| --- | --- | --- | --- |
+| Xsens 设备（上位机电脑 + 动捕服） | 1 套 | Xsens 遥操作 | |
+| 网线（5 米以上） | 2 根 | 上位机↔动捕服、上位机↔机器人背后网口 | 仅有线方案 |
+| 网线（短） | 4 根 | 连接自组网通信模块与设备 | 仅自组网方案 |
+| 自组网模块（1 主 + 1 子） | 2 套 | 无线通信 | 仅自组网方案 |
+
+## PICO 软件安装
+
+若 PICO 中无遥操作软件，按以下步骤安装：
+
+1. 下载 `LejuVRTeleopRobot` apk（<span className="badge-todo">待补充公开下载地址</span>）
+2. 用数据线连接电脑和 PICO
+3. PICO 开启开发者模式：**关于本机 → 软件版本号**，用扳机多次点击软件版本号，设置界面左下角会出现开发者模式
+4. 安装 [adb 调试工具](https://github.com/Genymobile/scrcpy/releases)（scrcpy 包内含 adb），解压即可
+5. 把 apk 移到解压后的文件夹，执行安装，需要在 VR 设备中点击授权：
+
+```bash
+./adb install LejuVRTeleopRobot-<版本号>.apk
+```
+
+:::warning 遥操作时必须关闭 PICO 的 WIFI
+安装完软件后建议直接关闭 WIFI，全程无需打开。
+:::
+
+## 机器人网络配置
+
+**机器人通过网线连接至 PICO**，把有线网的 IPv4 配置改为**「与其它计算机共享」**，点击应用，然后**重新开关一次有线网**完成网络共享。
+
+一般分配到的 IP 是 `10.42.0.1`，具体可通过 `ifconfig` 查看。下位机需要 USB 口转网口拓展坞。
+
+:::note
+根据使用体验，roban 3588 降本版可能每次重新启动都需要重新配置一次网络。
+:::
+
+## 环境配置与代码编译
+
+### 安装 Python 3.10
+
+用于在线数据重定向的 GMR 环境。
+
+```bash
+sudo su
+apt-get update
+apt-get install -y \
+  build-essential \
+  libssl-dev zlib1g-dev \
+  libncurses5-dev libncursesw5-dev \
+  libreadline-dev libsqlite3-dev \
+  libgdbm-dev libdb5.3-dev \
+  libbz2-dev libexpat1-dev \
+  liblzma-dev tk-dev libffi-dev \
+  wget
+```
+
+```bash
+sudo su   # 若已在 root 权限下可跳过
+cd /usr/src
+wget https://www.python.org/ftp/python/3.10.14/Python-3.10.14.tgz
+tar -xzf Python-3.10.14.tgz
+cd Python-3.10.14
+./configure --enable-optimizations --prefix=/opt/python3.10
+make -j"$(nproc)"
+make altinstall
+export PATH=/opt/python3.10/bin:$PATH
+python3.10 --version   # 应显示 3.10.x
+```
+
+### 拉取仓库与配置 GMR
+
+源码位于 [AtomGit 开源仓库](https://atomgit.com/OpenLET/Lejulab_ARM)，最新策略及配置位于 `beta` 分支，Commit `9a064cab36ea026db4696a9c75221dbf75fd1e4c`。
+
+```bash
+cd lejulab_platform
+sudo su
+PICO_GMR_PYTHON=python3.10 bash src/leju_launch/scripts/setup_pico_gmr_env.sh
+```
 
 <Stub>
 
-- 补充设备清单与型号
-- 补充接线图
-- 给出标定的完整步骤与验收标准
+- 原文档的 clone 地址指向内部 GitLab，公开站点需要改为开源仓库地址，此处已省略
+- 确认开源仓库与内部仓库的对应关系
 
 </Stub>
 
-## 设备清单
+### 编译
 
-<!-- 待补充 -->
+```bash
+# 配置（必须用 gcc-11）
+CC=gcc-11 CXX=g++-11 scripts/cmake_configure.sh --fast build_cmake \
+    -DCMAKE_BUILD_TYPE=Release
 
-## 连接方式
+# 全量编译
+CC=gcc-11 CXX=g++-11 scripts/cmake_build.sh build_cmake
+```
 
-<!-- 待补充 -->
+### 同步按键与灵巧手
 
-## 标定流程
+```bash
+# 同步按键
+bash scripts/install_teleop_bindings.sh --overwrite
 
-<!-- 待补充 -->
+# 启用灵巧手
+bash scripts/enable_roban_revo2_hand.sh
+```
 
-## 常见问题
+## 接下来
 
-<!-- 待补充 -->
+- 用 PICO 遥操 → [PICO 遥操作](/docs/teleop/pico)
+- 用 Xsens 遥操 → [Xsens 遥操作](/docs/teleop/xsens)

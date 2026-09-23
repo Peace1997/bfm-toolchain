@@ -32,9 +32,9 @@ const sidebars: SidebarsConfig = {
       collapsible: false,
       items: [
         'teleop/intro',
-        'teleop/tracking',
-        'teleop/imitation',
         'teleop/setup',
+        'teleop/pico',
+        'teleop/xsens',
       ],
     },
     {

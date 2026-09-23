@@ -133,7 +133,7 @@ function Hero() {
           学会新技能。
         </h1>
         <p className={styles.heroSubtitle}>
-          BFM 小脑工具链把数据采集、技能后训练与模型部署接成一条流水线。
+          BFMTools 把数据采集、技能后训练与模型部署接成一条流水线。
           <br />
           从一段遥操作演示开始，在仿真里验证，再走到真机。
         </p>

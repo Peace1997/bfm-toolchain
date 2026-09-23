@@ -1,4 +1,4 @@
-# BFM 小脑工具链 · 文档站
+# BFMTools · 文档站
 
 围绕 BFM（Behavior Foundation Model，行为基础模型）的小脑工具链文档：**模型部署、数据集、技能后训练**。
 
@@ -110,5 +110,12 @@ PR 只跑构建检查不部署，见 [`build-check.yml`](.github/workflows/build
 > `baseUrl` 必须与仓库名一致（`/<REPO_NAME>/`），否则 CSS 和路由会 404。
 > 换自定义域名时，`url` 改成域名、`baseUrl` 改成 `/`，并在 `static/` 下放 `CNAME` 文件。
 
-仓库有了首个提交后，可以打开 `docusaurus.config.ts` 里被注释掉的
-`showLastUpdateTime`，页面底部就会显示最后更新时间。
+## 外观
+
+白底单一形态，对齐 LeTools 文档站：80px 毛玻璃顶栏、320px 固定侧边栏、
+SF Pro 字体栈、大写灰字分组标签、右侧 ON THIS PAGE 目录。
+设计变量集中在 [`src/css/custom.css`](src/css/custom.css)。
+
+深色模式已彻底移除：`colorMode.disableSwitch` 关掉了切换按钮，
+`custom.css` 里的深色变量也一并删了。将来要加回深色，需要重新补一套
+`[data-theme='dark']` 变量。

@@ -14,7 +14,8 @@ const BASE_URL = `/${REPO_NAME}/`;
 const REPO_URL = `https://github.com/${GITHUB_ORG}/${REPO_NAME}`;
 
 const config: Config = {
-  title: 'BFM 小脑工具链',
+  // TODO: 名称暂定 BFMTools，确定后仓库名与 baseUrl 一并调整
+  title: 'BFMTools',
   tagline: '部署 BFM，组织数据，训练技能。',
   favicon: 'img/favicon.ico',
 
@@ -60,14 +61,16 @@ const config: Config = {
 
   themeConfig: {
     image: 'img/social-card.jpg',
+    // 白底单一形态，与 LeTools 一致。要恢复深色切换把 disableSwitch 去掉即可
     colorMode: {
-      defaultMode: 'dark',
+      defaultMode: 'light',
+      disableSwitch: true,
       respectPrefersColorScheme: false,
     },
     navbar: {
-      title: 'BFM 小脑工具链',
+      title: 'BFMTools',
       logo: {
-        alt: 'BFM 小脑工具链',
+        alt: 'BFMTools',
         src: 'img/logo.svg',
       },
       items: [
@@ -118,11 +121,10 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `BFM 小脑工具链 · 文档站`,
+      copyright: `BFMTools · 文档站`,
     },
     prism: {
       theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
       additionalLanguages: ['bash', 'python', 'yaml', 'json', 'cpp'],
     },
     // TODO(待确认): 接入站内搜索（Algolia DocSearch 或本地搜索插件）

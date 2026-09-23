@@ -11,6 +11,8 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: '概览',
       collapsed: false,
+      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
+      collapsible: false,
       items: [
         'overview/intro',
         'overview/architecture',
@@ -22,6 +24,8 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: '快速开始',
       collapsed: false,
+      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
+      collapsible: false,
       items: [
         'quickstart/intro',
         'quickstart/environment',
@@ -37,6 +41,8 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'BFM 模型',
       collapsed: false,
+      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
+      collapsible: false,
       items: [
         'bfm/intro',
         'bfm/architecture',
@@ -52,6 +58,8 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: '模型部署',
       collapsed: false,
+      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
+      collapsible: false,
       items: [
         'deployment/intro',
         'deployment/runtime',
@@ -65,6 +73,8 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: '数据集',
       collapsed: false,
+      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
+      collapsible: false,
       items: [
         'datasets/intro',
         'datasets/format',
@@ -77,6 +87,8 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: '技能后训练',
       collapsed: false,
+      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
+      collapsible: false,
       items: [
         'post-training/intro',
         'post-training/pipeline',
@@ -93,6 +105,8 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: '技能实践',
       collapsed: false,
+      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
+      collapsible: false,
       items: [
         'practices/intro',
         'practices/locomotion',
@@ -108,6 +122,8 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: '参考',
       collapsed: false,
+      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
+      collapsible: false,
       items: [
         'reference/cli',
         'reference/python-api',

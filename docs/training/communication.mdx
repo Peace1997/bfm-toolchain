@@ -1,0 +1,179 @@
+---
+sidebar_position: 4
+title: 通信准备
+description: 控制器切换 CLI、CycloneDDS 安装、有线与 ROS 通信配置。
+---
+
+# 通信准备
+
+**边侧机跑模型，下位机跑 HEFT。** 推理前先打通这条链路：控制器切换 CLI、CycloneDDS，以及边侧机到机器人的有线 / ROS 通信。
+
+## 1. 编译控制器切换 CLI
+
+边侧机克隆 `lejulab_platform`，切到 `heft/dev` 分支编译：
+
+```bash
+git clone https://www.lejuhub.com/highlydynamic/lejulab_platform.git
+cd lejulab_platform
+git switch -c heft/dev origin/heft/dev
+
+conda deactivate          # 请退出 conda 环境后编译。若提示符仍有 (base)，说明没退干净
+mkdir -p build && cd build
+
+export ROBOT_VERSION=17   # 编译不是刚需，启动仿真/控制器时必须有
+
+cmake .. -DFORCE_PURE_CMAKE=ON
+make -j$(nproc)
+```
+
+:::warning 当前仅支持内部仓库克隆
+上面的地址是内部仓库，**外部用户暂时无法访问，敬请期待**。
+:::
+
+可执行文件默认在：
+
+```text
+lejulab_platform/devel/lib/leju-rl-controller/controller_switch_cli
+```
+
+### 测试切换
+
+手动切到 AMP 做连通性检查（把路径和网卡配置换成自己的）：
+
+```bash
+export ROBOT_VERSION=17
+export CYCLONEDDS_URI="file:///path/to/LeTools-Learning/configs/deploy/cyclonedds_roban_edge.xml"
+export LD_LIBRARY_PATH="/path/to/lejulab_platform/src/lejusdk/3rd_party/x86_64/cyclonedds-cxx-0.10.2/lib:/path/to/lejulab_platform/src/lejusdk/3rd_party/x86_64/cyclonedds-0.10.2/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
+/path/to/lejulab_platform/devel/lib/leju-rl-controller/controller_switch_cli amp
+```
+
+成功时会打印 `控制器切换请求已发送: amp`。
+
+### 填入部署配置
+
+把可执行文件与 CycloneDDS 库路径填入 `configs/deploy/roban_wholebody_deploy.yaml`。按本机安装路径替换 `/path/to/lejulab_platform` 即可，其后的相对路径固定不变：
+
+```yaml
+heft:
+  switch_cli: "/path/to/lejulab_platform/devel/lib/leju-rl-controller/controller_switch_cli"
+  switch_library_path: "/path/to/lejulab_platform/src/lejusdk/3rd_party/x86_64/cyclonedds-cxx-0.10.2/lib:/path/to/lejulab_platform/src/lejusdk/3rd_party/x86_64/cyclonedds-0.10.2/lib"
+```
+
+## 2. 安装 CycloneDDS 0.10.2
+
+pip 没有与下位机匹配的预编译 0.10.2 wheel，需要用 `lejulab_platform` 里的原生库在 `letools` 环境中编译安装：
+
+```bash
+conda activate letools     # 没有就先按 LeTools-Learning 文档新建环境
+export CYCLONEDDS_HOME=/path/to/lejulab_platform/src/lejusdk/3rd_party/x86_64/cyclonedds-0.10.2
+export CMAKE_PREFIX_PATH="${CYCLONEDDS_HOME}${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+
+mkdir -p /tmp/cyclonedds-python-wheel
+python -m pip wheel \
+  --no-deps \
+  --no-build-isolation \
+  --no-binary cyclonedds \
+  --wheel-dir /tmp/cyclonedds-python-wheel \
+  cyclonedds==0.10.2
+
+python -m pip install \
+  --force-reinstall \
+  --no-deps \
+  /tmp/cyclonedds-python-wheel/cyclonedds-0.10.2-*.whl
+```
+
+验证：
+
+```bash
+python -m pip show cyclonedds
+```
+
+## 3. 配有线通信
+
+用网线连接边侧机和机器人下位机。SSH 进机器人，用 `ip -br addr` 查出上位机与边侧机的网口名，补全脚本中的 `IFACE1` / `IFACE2`，新建 `setup_bridge.sh` 并执行：
+
+```bash
+bash setup_bridge.sh
+```
+
+<details>
+<summary>setup_bridge.sh 完整内容</summary>
+
+```bash
+#!/bin/bash
+BRIDGE=br0
+IFACE1=上位机网口名称 # 替换成你的上位机接口名
+IFACE2=边侧机网口名称 # 替换成你的边侧机接口名
+BRIDGE_IP=192.168.26.1/24
+
+if ip link show "$BRIDGE" &>/dev/null; then
+    echo "错误：桥接接口 $BRIDGE 已存在，请先删除或使用其它名称。"
+    exit 1
+fi
+if ! ip link show "$IFACE1" &>/dev/null; then
+    echo "错误：物理网卡 $IFACE1 不存在，退出脚本。"
+    exit 1
+fi
+if ! ip link show "$IFACE2" &>/dev/null; then
+    echo "错误：物理网卡 $IFACE2 不存在，退出脚本。"
+    exit 1
+fi
+
+echo "=== 停用接口 ==="
+sudo ip link set dev $IFACE1 down
+sudo ip link set dev $IFACE2 down
+echo "=== 清除接口IP地址 ==="
+sudo ip addr flush dev $IFACE1
+sudo ip addr flush dev $IFACE2
+echo "=== 创建桥接接口 ==="
+sudo ip link add name $BRIDGE type bridge
+echo "=== 将物理接口加入桥接 ==="
+sudo ip link set dev $IFACE1 master $BRIDGE
+sudo ip link set dev $IFACE2 master $BRIDGE
+echo "=== 启动物理接口和桥接接口 ==="
+sudo ip link set dev $IFACE1 up
+sudo ip link set dev $IFACE2 up
+sudo ip link set dev $BRIDGE up
+echo "=== 给桥接接口分配IP地址 ==="
+sudo ip addr add $BRIDGE_IP dev $BRIDGE
+echo "=== 显示接口状态 ==="
+ip addr show $BRIDGE
+ip addr show $IFACE1
+ip addr show $IFACE2
+echo "临时关闭桥接流量经过 iptables 过滤"
+sudo sysctl -w net.bridge.bridge-nf-call-iptables=0
+echo "=== 桥接配置完成 ==="
+```
+
+</details>
+
+边侧机有线网：**有线 → 齿轮 → IPv4 → 手动**
+
+| 项 | 值 |
+| --- | --- |
+| 地址 | `192.168.26.10` |
+| 掩码 | `255.255.255.0` |
+| 网关 | `192.168.26.1` |
+
+应用后断开再连。正常时可 ping 通下位机 `192.168.26.1` 和上位机 `192.168.26.12`。
+
+## 4. 配 ROS 通信（相机）
+
+在边侧机终端：
+
+```bash
+export ROS_MASTER_URI=http://192.168.26.12:11311
+export ROS_IP=192.168.26.10
+```
+
+验证：
+
+- `rostopic list` 应能看到上位机 topic
+- `rostopic echo /camera/color/image_raw/compressed` 应有图像
+
+默认部署配置里的相机 topic 也是这个。**若上位机没开数采服务，需要自行 launch 相机。**
+
+## 下一步
+
+[推理部署](/docs/training/inference)

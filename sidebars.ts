@@ -20,9 +20,8 @@ const sidebars: SidebarsConfig = {
       collapsible: false,
       items: [
         'bfm/intro',
-        'bfm/action-library',
+        'bfm/setup',
         'bfm/deployment',
-        'bfm/capabilities',
       ],
     },
     {
@@ -44,10 +43,10 @@ const sidebars: SidebarsConfig = {
       collapsible: false,
       items: [
         'training/intro',
-        'training/collect',
-        'training/process',
-        'training/train',
-        'training/deploy',
+        'training/data',
+        'training/model-training',
+        'training/communication',
+        'training/inference',
       ],
     },
     {

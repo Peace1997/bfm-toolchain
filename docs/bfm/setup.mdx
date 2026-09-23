@@ -1,0 +1,90 @@
+---
+sidebar_position: 2
+title: 环境配置
+description: 仓库、分支、编译与按键同步，跑基模之前先完成这一页。
+---
+
+# 环境配置
+
+## 仓库与分支
+
+源码位于 [AtomGit 开源仓库](https://atomgit.com/OpenLET/Lejulab_ARM)。
+
+| 项 | 值 |
+| --- | --- |
+| 分支 | `origin/beta` |
+| Commit | `9a064cab36ea026db4696a9c75221dbf75fd1e4c` |
+| 配置文件 | `src/leju-controllers/leju-rl-controller/config/17/controllers/config_heft.yaml` |
+
+## 模型权重
+
+**权重已随代码一起公开在仓库中**，无需单独下载。
+
+| 策略 | 说明 |
+| --- | --- |
+| `policy_let.onnx` | 当前推荐版本。加入青瞳数据训练，消除了之前策略偶尔发生的晃动问题 |
+
+:::note onnx 与 onnx.data 要放在一起
+`.onnx` 和 `.onnx.data` 必须位于同一路径下。
+:::
+
+<Stub>
+
+- 后续可能补充一个 sonic 模型，到时在此追加
+- 补充权重在仓库中的具体路径
+
+</Stub>
+
+## 克隆与编译
+
+克隆仓库，切换到对应分支及提交，按 README 配置环境并编译。
+
+:::warning 切分支要重新编译
+每次切换分支都需要重新编译。
+:::
+
+## 同步按键
+
+不同步的话手柄按键无法切换。
+
+```bash
+bash scripts/install_teleop_bindings.sh --overwrite
+```
+
+## 配置文件要确认的字段
+
+配置文件里有几个关键字段，**放置轨迹与策略后必须核对**：
+
+- 策略路径
+- 轨迹名称及路径
+- 参考数据观测未来帧
+- 观测维度
+
+<Stub>
+
+- 补充配置文件的字段示例（原文档是截图，公开站点需要改成代码块）
+- 确认观测维度等参数随模型版本的变化情况
+
+</Stub>
+
+## 清理旧编译
+
+如果之前运行过 `lejulab_platform` 仓库，需要删除之前编译的 build 目录，从头配置并编译：
+
+```bash
+# 清理旧构建
+rm -rf build_cmake
+rm -rf build devel
+rm -rf installed
+
+# 配置（必须用 gcc-11）
+CC=gcc-11 CXX=g++-11 scripts/cmake_configure.sh --fast build_cmake \
+    -DCMAKE_BUILD_TYPE=Release
+
+# 全量编译
+CC=gcc-11 CXX=g++-11 scripts/cmake_build.sh build_cmake
+```
+
+## 下一步
+
+[离线轨迹追踪部署](/docs/bfm/deployment)

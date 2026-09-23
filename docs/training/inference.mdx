@@ -1,0 +1,154 @@
+---
+sidebar_position: 5
+title: 推理部署
+description: 启动推理 Server 与 Client，在真机上跑起全身 VLA。
+---
+
+# 推理部署
+
+先完成 [通信准备](/docs/training/communication)，再按本页启动。推理分两端：**Server 跑模型，Client 驱动机器人**。
+
+## 一、启动推理 Server
+
+### 配置
+
+在边侧机的 LeTools-Learning 仓库中，修改 `configs/server/launcher.yaml` 里对应模型的 adapter。
+
+:::warning 短名格式与 policy_type
+全身 VLA 配置短名为 `{model_name}_roban_wholebody` 格式，`inference.policy_type` 保持 `client`。
+:::
+
+#### OpenPI
+
+```yaml
+openpi_roban_wholebody:
+  adapter: openpi_roban_wholebody
+  env:
+    mode: uv
+    project: ${REPO_ROOT}/kuavo_model/external_models/openpi
+  args:
+    checkpoint: /path/to/openpi/roban_wholebody/checkpoint # 【必填】
+    policy_config_name: pi05_roban_wholebody               # 必须与训练 config 的 name 一致
+    execution_horizon: 0                                   # 0 使用模型完整 50-step chunk
+```
+
+仓库示例训练名是 `pi05_roban_wholebody`。launcher 里如果仍写着 `pi0_roban_wholebody`，请改成实际训练用的 name。
+
+#### GR00T N1.7
+
+```yaml
+groot_roban_wholebody:
+  adapter: isaac_gr00t_n17_roban_wholebody
+  env:
+    mode: uv
+    project: ${REPO_ROOT}/kuavo_model/external_models/gr00tn1d7
+  args:
+    checkpoint: /path/to/gr00t/checkpoint # 【必填】
+    embodiment_tag: NEW_EMBODIMENT
+    execution_horizon: 40
+    device: cuda
+```
+
+`execution_horizon: 40` 与 `roban_wholebody.py` 的 action chunk 对齐。
+
+#### LingBot-VLA v2
+
+```yaml
+lingbotvla2_roban_wholebody:
+  adapter: lingbot_vla_v2_roban_wholebody
+  env:
+    mode: conda
+    conda_env: lingbotvla2
+  args:
+    checkpoint: /path/to/global_step_xxx/hf_ckpt       # 【必填】写到 hf_ckpt 这一级
+    training_config_path: /path/to/lingbotvla_cli.yaml # 【必填】训练产物 hf_ckpt 的父父文件夹
+    qwen3vl_path: /path/to/Qwen3-VL-4B-Instruct        # 【必填】
+    robot_norm_path: /path/to/roban_wholebody.json     # 【必填】compute_norm_stats 的输出
+    robot_config_path: ""                              # 留空时使用 kuavo_server 内置配置
+    execution_horizon: 50
+```
+
+`execution_horizon: 50` 对齐 50 Hz chunk。
+
+:::tip 本地已有权重却仍访问 Hugging Face
+`export HF_HUB_OFFLINE=1`
+:::
+
+### 启动
+
+| 模型 | 启动命令 |
+| --- | --- |
+| OpenPI | `python kuavo_server/launch.py openpi_roban_wholebody` |
+| GR00T N1.7 | `python kuavo_server/launch.py groot_roban_wholebody` |
+| LingBot-VLA v2 | `python kuavo_server/launch.py lingbotvla2_roban_wholebody` |
+
+## 二、启动推理 Client
+
+### 配置
+
+确认 `configs/deploy/roban_wholebody_deploy.yaml`：
+
+```yaml
+platform_type: roban                   # eval.py 靠这一项走全身入口
+camera:
+  topic: /camera/color/image_raw/compressed
+dds:
+  config_uri: cyclonedds_roban_edge.xml
+inference:
+  policy_type: client
+  server_host: localhost
+  server_port: 5555
+  task_prompt: "robot manipulation"   # 与训练使用的 language instruction 一致
+execution:
+  mode: sync                          # 真机建议先 sync
+  action_hz: 50.0
+heft:
+  controller: heft_pico
+  fallback_controller: amp
+```
+
+:::note 夹爪量纲转换
+模型夹爪是 `[0, 1]`，DDS `/rt/hand_cmd` 是 `[0, 100]`，由 `heft.hand_scale: 100.0` 缩放。切到 HEFT 前会按 `warmup_sec` 预热下位机缓冲。
+:::
+
+### 启动
+
+在**已 export `ROS_MASTER_URI` / `ROS_IP` 的终端**运行：
+
+```bash
+python kuavo_deploy/eval.py configs/deploy/roban_wholebody_deploy.yaml
+```
+
+全身入口只有两项：
+
+```text
+1. run : 运行 HEFT wholebody 模型推理
+2. 退出
+```
+
+选 `1` 直接开始推理，中途输入 `s` 停止。
+
+:::note 与 Kuavo 双臂流程的差异
+全身 VLA 推理**没有** Kuavo 那套 go / bag 回放。
+:::
+
+### sync 与 async
+
+| 模式 | 行为 | 建议 |
+| --- | --- | --- |
+| `sync` | 等推理完成再送下一拍 | **真机先用这个**，更适合联调 |
+| `async` | 下一 chunk 推理时继续向 HEFT 送 50 Hz 指令 | 能维持 50 Hz 流，但实测效果欠佳 |
+
+短时欠载会保持上一拍动作；**持续欠载会停流并切回 AMP 模式**。
+
+## 检查清单
+
+上真机前对照 [全身 VLA 概览](/docs/training/intro#检查清单) 的五条逐一确认。
+
+<Stub>
+
+- 补充推理时延与实际控制频率的实测数据
+- 补充作业成功率与典型失败案例
+- 补充异常时的急停与人工接管流程
+
+</Stub>

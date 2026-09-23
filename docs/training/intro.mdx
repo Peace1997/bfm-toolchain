@@ -1,61 +1,58 @@
 ---
 sidebar_position: 1
-title: 四步总览
-description: 从数据采集到真机作业的标准四步流程。
+title: 全身 VLA 概览
+description: Roban 全身 VLA 的数据规格、支持的模型与整体流程。
 ---
 
-# 四步总览
+# 全身 VLA 概览
 
-每个操作技能都走同一条路：**采集 → 处理 → 训练 → 部署**。流程固定下来，结果才可复现、可比较、可交接。
+**Roban 全身 VLA** 覆盖从数据转换、模型训练，到基于 CycloneDDS 与 HEFT 的真机推理的完整流程。
 
-<Stub>
+:::note 上游文档
+本模块内容与 [LeTools-Learning 文档](https://www.letools.lejurobot.com/docs.html#tutorials/roban_wholebody_vla.md) 同源，以那边为准。发现不一致时请以上游为准并回报。
+:::
 
-- 每一步补上实际命令与产物路径
-- 补充各步骤的典型耗时与资源占用
-- 明确产物的命名与归档规范
+## 规格
 
-</Stub>
+| 项目 | 说明 |
+| --- | --- |
+| 状态 | **23 维**：左臂 4 + 左爪 1 + 右臂 4 + 右爪 1 + 左腿 6 + 右腿 6 + 腰 1 |
+| 动作 | **32 维**：上述 23 维 + `root_xyz` 3 + `root_rot6d` 6 |
+| 图像 | 仅头部相机 |
+| 频率 | 训练与 HEFT 控制均为 **50 Hz** |
+| 布局定义 | `kuavo_data/modality_templates/roban_wholebody_modality.json` |
+| 支持模型 | OpenPI、Isaac GR00T N1.7、LingBot-VLA v2 |
+
+维度顺序与 `kuavo_data/roban_data/config.py` 中的 `WHOLEBODY_STATE_NAMES` / `WHOLEBODY_ACTION_NAMES` 一致。
 
 ## 流程
 
 ```mermaid
 flowchart LR
-    A["01 采集<br/>任务示范数据"] --> B["02 处理<br/>可训练数据"]
-    B --> C["03 训练<br/>操作技能模型"]
-    C --> D["04 部署<br/>真机作业验证"]
-    D -->|"补采失败场景"| A
+    A["数据准备<br/>rosbag → LeRobot"] --> B["模型训练<br/>OpenPI / GR00T / LingBot"]
+    B --> C["通信准备<br/>CycloneDDS + ROS"]
+    C --> D["推理部署<br/>Server + Client"]
 ```
 
-| 步骤 | 产物 | 做什么 |
+| 步骤 | 做什么 | 文档 |
 | --- | --- | --- |
-| [01 采集](/docs/training/collect) | 任务示范数据 | 全身遥操作，采集协同作业过程 |
-| [02 处理](/docs/training/process) | 可训练数据 | 自动化清洗与标注，输出标准可训练数据 |
-| [03 训练](/docs/training/train) | 操作技能模型 | 端到端模型训练，训练数据实时查看 |
-| [04 部署](/docs/training/deploy) | 真机作业验证 | 全身操作模型，实现全自主作业 |
-
-注意那条回边：真机上暴露的失败场景要回到采集补数据。**这条回边才是实际工作中花时间最多的地方。**
-
-:::tip 效果不好先看数据
-回到第 03 步调超参之前，先确认不是数据的问题——覆盖不足、标注错误、时间对齐偏差造成的失败，调多少次超参都救不回来。
-:::
-
-## 产物要求
-
-一次完整的训练应当产出：
-
-| 产物 | 说明 |
-| --- | --- |
-| 模型权重 | 可被部署环节加载 |
-| 训练配置 | 完整的、可直接复现本次训练的配置 |
-| 评测记录 | 验证结果与失败案例 |
-| 数据集版本 | 本次训练用的数据集标识与版本 |
-
-:::warning 四样缺一不可
-少了任何一样，这次训练就是不可复现的。三个月后没人能说清楚那个权重是怎么来的。
-:::
+| 数据准备 | rosbag 转 LeRobot v3 数据集 | [数据准备](/docs/training/data) |
+| 模型训练 | 三个外置模型各自训练 | [模型训练](/docs/training/model-training) |
+| 通信准备 | 控制器切换、CycloneDDS、有线与 ROS 通信 | [通信准备](/docs/training/communication) |
+| 推理部署 | 启动推理 Server 与 Client | [推理部署](/docs/training/inference) |
 
 ## 前置条件
 
-- 遥操链路已搭好并标定 → [设备与标定](/docs/teleop/setup)
-- 了解数据格式约定 → [数据格式](/docs/datasets/format)
-- 也可以直接用现成数据起步 → [开源真机数据集](/docs/datasets/intro)
+使用前请先装好 LeTools 主环境和对应的外置模型环境。
+
+通用 Kuavo 双臂流程不在本模块范围内，本模块只覆盖 **Roban wholebody VLA 的差异**。
+
+## 检查清单
+
+上真机前逐条确认：
+
+1. 数据集是 **23D state / 32D action**、只有头相机、**50 Hz**
+2. 三个模型都**不要误用** Kuavo 双臂 adapter（`openpi` / `groot` / `lingbotvla2`）
+3. OpenPI 的 `policy_config_name`、LingBot 的 `lingbotvla_cli.yaml` 与 `robot_norm_path` **必须来自同一次训练**
+4. 边侧机可以 ping 通 `192.168.26.1` / `192.168.26.12`，ROS 能收到压缩图，`controller_switch_cli amp` 能发出切换
+5. `cyclonedds_roban_edge.xml` 的网卡名和 `heft.switch_*` 路径已换成实际机器

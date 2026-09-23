@@ -1,45 +1,15 @@
 ---
 sidebar_position: 3
 title: 离线轨迹追踪部署
-description: HEFT 离线轨迹追踪的部署流程、注意事项与效果验证。
+description: HEFT 离线轨迹追踪的部署流程、仿真验证与注意事项。
 ---
 
 # 离线轨迹追踪部署
 
-把一条离线轨迹交给基模播放出来。流程是：转换轨迹格式 → 配置环境 → 启动机器 → 手柄播放。
+把一条离线轨迹交给基模播放出来。先完成 [环境配置](/docs/bfm/setup)。
 
 :::danger 务必先在仿真里验证
 测试任何新轨迹之前**必须先在仿真中跑一遍**，确认没问题再上真机。
-:::
-
-## 仓库与分支
-
-源码位于 [AtomGit 开源仓库](https://atomgit.com/OpenLET/Lejulab_ARM)。
-
-| 项 | 值 |
-| --- | --- |
-| 分支 | `origin/beta` |
-| Commit | `9a064cab36ea026db4696a9c75221dbf75fd1e4c` |
-| 配置文件 | `src/leju-controllers/leju-rl-controller/config/17/controllers/config_heft.yaml` |
-
-配置文件里需要确认的关键字段：**策略路径**、**轨迹名称及路径**、**参考数据观测未来帧**、**观测维度**。
-
-<Stub>
-
-- 补充配置文件的字段示例（原文档是截图，公开站点需要改成文本或代码块）
-- 确认观测维度等参数随模型版本的变化情况
-
-</Stub>
-
-## 模型版本
-
-| 日期 | 策略 | 特点 |
-| --- | --- | --- |
-| 20260905 | `policy_let.onnx` | 加入青瞳数据训练，消除了之前策略偶尔发生的晃动问题 |
-| 20260825 | `policy_sym.onnx` | 加入更新的 seed 数据，跟踪效果较好；地面动作一般，跳跃太高容易力矩/速度超限 |
-
-:::note 权重获取
-`.onnx` 与 `.onnx.data` 需放在同一路径下。权重文件目前存放在内部飞书文档中，<span className="badge-todo">待补充公开获取方式</span>。
 :::
 
 ## 部署流程
@@ -54,27 +24,11 @@ description: HEFT 离线轨迹追踪的部署流程、注意事项与效果验�
 
 </Stub>
 
-### 2. 克隆与编译
+### 2. 放置轨迹与策略
 
-克隆仓库，切换到对应分支及提交，按 README 配置环境并编译。
+把要测试的轨迹及策略放到对应路径中，确认**参考数据观测未来帧及观测维度与配置文件一致**。
 
-:::warning 切分支要重新编译
-每次切换分支都需要重新编译。
-:::
-
-### 3. 同步按键
-
-否则手柄按键无法切换。
-
-```bash
-bash scripts/install_teleop_bindings.sh --overwrite
-```
-
-### 4. 放置轨迹与策略
-
-把要测试的轨迹及策略放到对应路径中（`onnx` 和 `onnx.data` 放到相同路径），确认**参考数据观测未来帧及观测维度与配置文件一致**。
-
-### 5. 启动机器
+### 3. 启动机器
 
 ```bash
 sudo su
@@ -82,7 +36,7 @@ export ROBOT_VERSION=17
 sudo bash src/leju_launch/scripts/launch_real.sh
 ```
 
-### 6. 播放轨迹
+### 4. 播放轨迹
 
 启动后用北通手柄操作：
 
@@ -123,25 +77,11 @@ roslaunch leju_launch load_mujoco_sim.launch enable_iceoryx_shm:=false
 
 **环境影响** —— 不同环境或者地面对策略表现有影响。
 
-**清理旧编译** —— 如果之前运行过 `lejulab_platform` 仓库，需要删除之前编译的 build 目录，从头配置并编译：
-
-```bash
-# 清理旧构建
-rm -rf build_cmake
-rm -rf build devel
-rm -rf installed
-
-# 配置（必须用 gcc-11）
-CC=gcc-11 CXX=g++-11 scripts/cmake_configure.sh --fast build_cmake \
-    -DCMAKE_BUILD_TYPE=Release
-
-# 全量编译
-CC=gcc-11 CXX=g++-11 scripts/cmake_build.sh build_cmake
-```
+**编译残留** —— 换过分支或之前编译过其他版本时，按 [环境配置 · 清理旧编译](/docs/bfm/setup#清理旧编译) 从头来一遍。
 
 ## 已验证轨迹
 
-原文档按模型版本整理了若干轨迹的效果对照（舞蹈、武术、转身、跳跃、拳击等），每条都有对应的轨迹 CSV 与效果视频。
+原文档按模型版本整理了若干轨迹的效果对照，覆盖舞蹈、武术（鹤拳、印度舞）、连续前后左右转身、跳跃、拳击等，每条都有对应的轨迹 CSV 与效果视频。
 
 <Stub>
 

@@ -1,0 +1,156 @@
+---
+sidebar_position: 3
+title: 模型训练
+description: OpenPI、Isaac GR00T N1.7、LingBot-VLA v2 三个模型的训练配置与命令。
+---
+
+# 模型训练
+
+三个模型共用 [数据准备](/docs/training/data) 产出的 LeRobot 数据，但**环境和配置各自独立**。权重下载与主环境安装按 LeTools-Learning 的「外置模型训练」章节。
+
+## OpenPI
+
+训练配置在 `kuavo_model/external_models/openpi/src/openpi/training/config.py`。仓库已提供 `pi05_roban_wholebody` 示例，按实际路径修改 `data.root` 和 `checkpoint_base_dir`：
+
+```python
+TrainConfig(
+    name="pi05_roban_wholebody",
+    model=pi0_config.Pi0Config(
+        pi05=True,
+        action_dim=roban_wholebody_policy.ACTION_DIM,
+        discrete_state_input=True
+    ),
+    data=LeRobotRobanWholebodyDataConfig(
+        repo_id="roban_wholebody",
+        root="/path/to/dataset/",
+        base_config=DataConfig(prompt_from_task=True),
+        extra_delta_transform=True,
+    ),
+    weight_loader=weight_loaders.CheckpointWeightLoader(
+        "gs://openpi-assets/checkpoints/pi05_base/params"
+    ),
+    num_train_steps=60_000,
+    # ...
+)
+```
+
+`extra_delta_transform=True` 时，前 23 维里手臂 / 腿 / 腰学 delta，左右夹爪保持绝对，`root_xyz` / `root_rot6d` 也保持绝对。
+
+:::warning action_dim 不能小于 32
+头部图会填到 OpenPI 的 `base_0_rgb`，左右腕相机用零图占位。
+:::
+
+进入 `kuavo_model/external_models/openpi`：
+
+```bash
+uv run scripts/compute_norm_stats.py --config-name pi05_roban_wholebody
+```
+
+```bash
+export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
+XLA_PYTHON_CLIENT_MEM_FRACTION=0.9 uv run scripts/train.py pi05_roban_wholebody \
+  --exp-name=pi05_roban_wholebody --overwrite
+```
+
+若要训 pi0，按 Kuavo 的 `pi0_kuavo` 示例复制一份，把 `name`、`data=LeRobotRobanWholebodyDataConfig`、`action_dim` 改成全身布局即可。
+
+:::warning 推理时 policy_config_name 必须与这里的 name 一致
+:::
+
+## Isaac GR00T N1.7
+
+GR00T 使用 **LeRobot v2**，先把 v3 数据转成 v2：
+
+```bash
+cd kuavo_model/external_models/gr00tn1d7/scripts/lerobot_conversion
+uv run python convert_v3_to_v2.py --repo-id lerobot --root /path/to/lerobot_v3_last_dir
+```
+
+`--root` 是 v3 数据集目录的**上一级**，`--repo-id` 是文件夹名，二者拼成 `root/repo-id`。
+
+转换后把 `kuavo_data/modality_templates/roban_wholebody_modality.json` 复制到数据集 `meta/` 下，**重命名为 `modality.json`**。
+
+全身 modality 已写在 `kuavo_model/external_models/gr00tn1d7/roban_wholebody.py`，action chunk 为 **40 步**。
+
+进入 `kuavo_model/external_models/gr00tn1d7`：
+
+### 单卡
+
+```bash
+CUDA_VISIBLE_DEVICES=0 uv run python \
+    gr00t/experiment/launch_finetune.py \
+    --base-model-path nvidia/GR00T-N1.7-3B \
+    --dataset-path /path/to/dataset \
+    --embodiment-tag NEW_EMBODIMENT \
+    --modality-config-path ./roban_wholebody.py \
+    --num-gpus 1 \
+    --output-dir /path/to/output \
+    --save-total-limit 5 \
+    --save-steps 30000 \
+    --max-steps 60000 \
+    --global-batch-size 128 \
+    --dataloader-num-workers 4
+```
+
+### 多卡
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 uv run torchrun \
+    --nproc_per_node=8 --master_port=29500 \
+    gr00t/experiment/launch_finetune.py \
+    --base-model-path nvidia/GR00T-N1.7-3B \
+    --dataset-path /path/to/dataset \
+    --embodiment-tag NEW_EMBODIMENT \
+    --modality-config-path ./roban_wholebody.py \
+    --num-gpus 8 \
+    --output-dir /path/to/output \
+    --save-total-limit 5 \
+    --save-steps 30000 \
+    --max-steps 60000 \
+    --global-batch-size 128 \
+    --dataloader-num-workers 4
+```
+
+详细 finetune 参数在 `gr00tn1d7/gr00t/configs/finetune_config.py`。
+
+## LingBot-VLA v2
+
+两份配置：
+
+| 配置 | 路径 | 说明 |
+| --- | --- | --- |
+| 机器人配置 | `lingbot-vla-v2/configs/robot_configs/roban_wholebody.yaml` | 当前全身各段 `subtract_state: false`，按**绝对动作**训练 |
+| 训练配置 | `lingbot-vla-v2/configs/vla/roban_wholebody/roban_wholebody.yaml` | `chunk_size` 为 50，对齐 50 Hz |
+
+训练配置至少要改：`model.model_path`、`model.tokenizer_path`、`data.train_path`、`train.output_dir`，以及 depth / DINO 权重路径。
+
+进入 `kuavo_model/external_models/lingbot-vla-v2`。先算 stats（单卡时把 `global_batch_size` 覆盖为 1）：
+
+```bash
+CUDA_VISIBLE_DEVICES=0 bash train.sh scripts/compute_norm_stats.py \
+  ./configs/vla/roban_wholebody/roban_wholebody.yaml \
+  --data.data_name roban_wholebody \
+  --data.train_path /path/to/roban_wholebody_lerobot \
+  --data.robot_config_root ./configs/robot_configs \
+  --data.norm_path assets/norm_stats/roban_wholebody.json \
+  --data.data_ratio_for_norm_compute 1 \
+  --train.global_batch_size 1 \
+  --data.num_workers 0
+```
+
+再训练：
+
+```bash
+bash train.sh tasks/vla/train_lingbotvla.py \
+  ./configs/vla/roban_wholebody/roban_wholebody.yaml \
+  --data.train_path /path/to/roban_wholebody_lerobot \
+  --data.norm_stats_file assets/norm_stats/roban_wholebody.json
+```
+
+:::danger 推理必须用训练产出的快照
+训练产物根目录会写出 `lingbotvla_cli.yaml`（yaml + 命令行覆盖的快照）。**推理必须用这份快照，不要只用仓库里的默认 yaml。**
+:::
+
+## 下一步
+
+[通信准备](/docs/training/communication)

@@ -1,0 +1,68 @@
+---
+sidebar_position: 2
+title: 数据准备
+description: 把 rosbag 转成 LeRobot v3 数据集。
+---
+
+# 数据准备
+
+把采集到的 rosbag 转成 LeRobot v3 数据集。
+
+## 配置
+
+编辑 `configs/data/RobanRosbag2Lerobot.yaml`：
+
+```yaml
+rosbag:
+  mode: normal
+  rosbag_dir: /path/to/roban_rosbags
+  target_dir: /path/to/roban_output   # 最终数据集在 target_dir/lerobot
+  parallel: false
+  parallel_workers: 4
+
+dataset:
+  platform_type: roban
+  task_description: "robot manipulation"
+  train_hz: 50
+  main_timeline: head_cam_h
+  main_timeline_fps: 60
+  sample_drop: 10
+  resize:
+    width: 640
+    height: 480
+  topics:
+    camera: /cam_h/color/image_raw/compressed
+```
+
+关键约定：
+
+| 字段 | 要求 |
+| --- | --- |
+| `platform_type` | 必须是 `roban` |
+| `train_hz` | 建议保持 `50`，与 HEFT 控制频率对齐 |
+
+:::note 主相机 fps 与训练频率不整除时
+转换脚本会按时间戳重采样。
+:::
+
+## 运行
+
+```bash
+python kuavo_data/roban_data/CvtRosbag2Lerobot.py
+```
+
+## 产出校验
+
+转换后的 LeRobot v3 数据集应包含：
+
+```text
+observation.state                     float32[23]
+action                                float32[32]
+observation.images.head_cam_h         image/video
+```
+
+维度对不上就不要往下走——后面训练不会报错，但模型学出来是错的。
+
+## 下一步
+
+[模型训练](/docs/training/model-training)

@@ -14,8 +14,8 @@
 /* 白底站点里靠浅灰面分段，而不是靠深浅对比 */
 .sectionAlt {
   background: var(--site-subtle);
-  border-top: 1px solid var(--site-border);
-  border-bottom: 1px solid var(--site-border);
+  border-top: 0.5px solid var(--site-rule);
+  border-bottom: 0.5px solid var(--site-rule);
 }
 
 .sectionHead {
@@ -67,7 +67,7 @@
   background:
     radial-gradient(
       ellipse 90% 70% at 50% -20%,
-      rgba(0, 113, 227, 0.1),
+      rgba(0, 102, 204, 0.09),
       transparent 70%
     ),
     var(--site-canvas);
@@ -188,7 +188,7 @@
 .btnGhost {
   color: var(--site-ink);
   background: var(--site-panel);
-  border: 1px solid var(--site-border);
+  border: 0.5px solid var(--site-rule);
 }
 
 .btnGhost:hover {
@@ -208,7 +208,7 @@
 
 .chips li {
   padding: 5px 14px;
-  border: 1px solid var(--site-border);
+  border: 0.5px solid var(--site-rule);
   border-radius: 999px;
   font-size: 0.8125rem;
   color: var(--site-muted);
@@ -224,7 +224,7 @@
   width: 100%;
   margin: 56px auto 0;
   padding: 22px 26px;
-  border: 1px solid var(--site-border);
+  border: 0.5px solid var(--site-rule);
   border-radius: 20px;
   background: var(--site-panel);
   text-decoration: none;
@@ -283,7 +283,7 @@
   display: flex;
   flex-direction: column;
   padding: 30px 30px 26px;
-  border: 1px solid var(--site-border);
+  border: 0.5px solid var(--site-rule);
   border-radius: 22px;
   background: var(--site-panel);
   text-decoration: none;
@@ -358,7 +358,7 @@
 
 .tagRow li {
   padding: 4px 11px;
-  border: 1px solid var(--site-border);
+  border: 0.5px solid var(--site-rule);
   border-radius: 8px;
   font-size: 0.75rem;
   color: var(--site-muted);
@@ -387,7 +387,7 @@
   gap: 8px;
   height: 100%;
   padding: 24px 20px;
-  border: 1px solid var(--site-border);
+  border: 0.5px solid var(--site-rule);
   border-radius: 18px;
   background: var(--site-canvas);
   text-decoration: none;
@@ -430,7 +430,7 @@
   display: flex;
   flex-direction: column;
   padding: 18px 18px 24px;
-  border: 1px solid var(--site-border);
+  border: 0.5px solid var(--site-rule);
   border-radius: 22px;
   background: var(--site-panel);
   text-decoration: none;
@@ -452,11 +452,11 @@
   background:
     linear-gradient(
       135deg,
-      rgba(0, 113, 227, 0.1),
+      rgba(0, 102, 204, 0.1),
       rgba(91, 63, 214, 0.06)
     ),
     var(--site-subtle);
-  border: 1px solid var(--site-border);
+  border: 0.5px solid var(--site-rule);
 }
 
 .practiceKicker {

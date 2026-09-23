@@ -1,45 +1,44 @@
 /**
- * 全站设计变量与文档页布局。
- * 外观对齐 LeTools 文档站：白底、SF Pro 字体栈、320px 固定侧边栏、
- * 毛玻璃顶栏。深色模式已关闭（config 里 disableSwitch）。
+ * 全站设计系统，对齐 LeTools 文档站。
+ * 数值取自 LeTools 线上样式表，不是目测近似值。
+ * 深色模式已移除，白底单一形态。
  */
 
 :root {
-  /* 强调色：白底上要保证对比度，不能用深色主题那套浅蓝 */
-  --ifm-color-primary: #0071e3;
-  --ifm-color-primary-dark: #0066cc;
-  --ifm-color-primary-darker: #0060c0;
-  --ifm-color-primary-darkest: #004f9e;
-  --ifm-color-primary-light: #1a80e8;
-  --ifm-color-primary-lighter: #2689ea;
-  --ifm-color-primary-lightest: #4da0ef;
+  /* 链接蓝：LeTools 用 #0066cc / hover #004499 */
+  --ifm-color-primary: #0066cc;
+  --ifm-color-primary-dark: #005cb8;
+  --ifm-color-primary-darker: #0057ad;
+  --ifm-color-primary-darkest: #004499;
+  --ifm-color-primary-light: #0a73dd;
+  --ifm-color-primary-lighter: #157dd1;
+  --ifm-color-primary-lightest: #3d8fe0;
 
   --ifm-font-family-base: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
     'SF Pro Text', 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB',
     'Microsoft YaHei', Arial, sans-serif;
-  --ifm-font-family-monospace: 'SFMono-Regular', Consolas, 'Liberation Mono',
-    Menlo, monospace;
+  --ifm-font-family-monospace: 'SF Mono', 'SFMono-Regular', Menlo, Monaco,
+    Consolas, 'Liberation Mono', monospace;
   --ifm-font-size-base: 16px;
   --ifm-line-height-base: 1.6;
 
-  /* 布局尺寸，对齐 LeTools。
-     注意 --doc-sidebar-width 必须写在下面的 min-width:997px 媒体查询里，
-     Docusaurus 自己就是在那个断点内声明的，写在这里会被它覆盖。 */
   --ifm-navbar-height: 80px;
-  --ifm-menu-color-background-active: var(--site-subtle);
 
-  /* 色板 */
+  /* 色板：全部取自 LeTools */
   --site-canvas: #ffffff;
-  --site-panel: #ffffff;
-  --site-subtle: #f5f5f7;
-  --site-border: #e5e7eb;
+  --site-panel: #ffffff; /* 卡片底色，首页在用 */
+  --site-subtle: #f5f5f7; /* 表头、选中态、行内代码底 */
+  --site-raised: #fbfbfd; /* 代码块、表格偶数行 */
+  --site-border: #eeeeee; /* 导航/侧栏分隔线 */
+  --site-rule: #e5e5e7; /* 内容区描边、分割线 */
+  --site-hairline: #d2d2d7; /* 引用块左条 */
   --site-ink: #1d1d1f;
   --site-body: #424245;
-  --site-muted: #6e6e73;
+  --site-muted: #86868b;
   --site-label: #9ca3af;
   --site-nav: rgba(255, 255, 255, 0.8);
 
-  /* 语义色：仿真 / 真机 / 模型。白底上需要压暗才够对比度 */
+  /* 语义色：仿真 / 真机 / 模型 */
   --site-sim: #0f7b4f;
   --site-real: #a35f00;
   --site-model: #5b3fd6;
@@ -47,9 +46,13 @@
   --ifm-background-color: var(--site-canvas);
   --ifm-font-color-base: var(--site-body);
   --ifm-heading-color: var(--site-ink);
-  --ifm-toc-border-color: var(--site-border);
-  --ifm-code-font-size: 87.5%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.07);
+  --ifm-toc-border-color: transparent;
+  --ifm-menu-color-background-active: var(--site-subtle);
+  --ifm-hr-border-color: var(--site-rule);
+  --ifm-hr-border-width: 0.5px;
+  --ifm-code-font-size: 0.9em;
+  --ifm-pre-padding: 24px; /* LeTools 的代码块内边距 */
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.06);
 }
 
 html,
@@ -57,17 +60,18 @@ body {
   background: var(--site-canvas);
   color: var(--site-body);
   -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
 }
 
-/* ---------- 顶栏：毛玻璃 ---------- */
+/* ---------- 顶栏 ---------- */
 
 .navbar {
   height: var(--ifm-navbar-height);
   padding: 0 48px;
   background: var(--site-nav);
-  backdrop-filter: saturate(1.8) blur(20px);
-  -webkit-backdrop-filter: saturate(1.8) blur(20px);
-  border-bottom: 1px solid var(--site-border);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid var(--site-border);
   box-shadow: none;
 }
 
@@ -92,7 +96,7 @@ body {
 /* ---------- 侧边栏 ---------- */
 
 .theme-doc-sidebar-container {
-  border-right: 1px solid var(--site-border) !important;
+  border-right: 0.5px solid var(--site-border) !important;
   background: var(--site-canvas);
 }
 
@@ -100,40 +104,39 @@ body {
   padding: 40px 24px;
 }
 
-.menu {
-  font-weight: 400;
-}
-
-/* 条目 */
 .menu__link {
   display: block;
   padding: 8px 16px;
   border-radius: 8px;
   font-size: 14px;
+  font-weight: 400;
   line-height: 1.5;
-  color: var(--site-body);
+  color: var(--site-muted);
+  transition: all 0.2s ease;
 }
 
 .menu__link:hover {
   background: var(--site-subtle);
-  color: var(--site-ink);
+  color: #000;
 }
 
+/* 选中态带一层极淡的浮起投影，是 LeTools 的细节 */
 .menu__link--active,
 .menu__link--active:hover {
   background: var(--site-subtle);
   color: #000;
   font-weight: 600;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.04),
+    0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
-/* 分组标签：不可折叠的一级分类渲染成小号大写灰字 */
+/* 分组标签永远是灰色小字，即便它自己带 --active */
 .theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible,
 .theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible:hover {
   background: transparent;
 }
 
-/* 分组标签永远是灰色小字，即便它自己带 --active
-   （分类链接指向分组首页时 Docusaurus 会给它加 active） */
 .theme-doc-sidebar-item-category-level-1
   > .menu__list-item-collapsible
   > .menu__link,
@@ -153,9 +156,9 @@ body {
   text-transform: uppercase;
   color: var(--site-label);
   background: transparent;
+  box-shadow: none;
 }
 
-/* 第一个分组不要顶部留白 */
 .menu__list > .theme-doc-sidebar-item-category-level-1:first-child
   > .menu__list-item-collapsible
   > .menu__link {
@@ -171,74 +174,180 @@ body {
 
 .markdown h1,
 .markdown header h1 {
-  font-size: 40px;
-  font-weight: 600;
-  letter-spacing: -0.8px;
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   line-height: 1.15;
-  color: var(--site-ink);
+  margin-bottom: 24px;
+  color: #000;
 }
 
 .markdown h2 {
-  margin-top: 48px;
   font-size: 26px;
   font-weight: 600;
-  letter-spacing: -0.52px;
+  letter-spacing: -0.02em;
+  margin-top: 48px;
+  margin-bottom: 20px;
   color: #000;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--site-border);
 }
 
 .markdown h3 {
-  margin-top: 32px;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.01em;
+  margin-top: 32px;
+  margin-bottom: 16px;
   color: var(--site-ink);
 }
 
-.markdown p,
-.markdown li {
+.markdown h4 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: var(--site-ink);
+}
+
+.markdown p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--site-body);
+  margin-bottom: 24px;
+}
+
+/* LeTools 的正文链接默认带下划线，偏移 4px */
+.markdown a {
+  color: var(--ifm-color-primary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+
+.markdown a:hover {
+  color: var(--ifm-color-primary-darkest);
+}
+
+.markdown ul,
+.markdown ol {
+  margin: 0 0 24px 1.5rem;
+  padding-left: 0.5rem;
   font-size: 16px;
   line-height: 1.6;
   color: var(--site-body);
 }
 
-.markdown a {
-  color: var(--ifm-color-primary);
-  text-decoration: none;
+.markdown li {
+  margin-bottom: 8px;
 }
 
-.markdown a:hover {
-  text-decoration: underline;
+.markdown ul {
+  list-style-type: disc;
+}
+.markdown ul ul {
+  list-style-type: circle;
+}
+.markdown ul ul ul {
+  list-style-type: square;
 }
 
-/* 行内代码 */
+.markdown blockquote {
+  border-left: 4px solid var(--site-hairline);
+  padding: 4px 0 4px 20px;
+  margin: 24px 0;
+  color: var(--site-body);
+  background: transparent;
+}
+
+.markdown blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown hr {
+  border: none;
+  border-top: 0.5px solid var(--site-rule);
+  margin: 48px 0;
+}
+
+.markdown dt {
+  margin-top: 20px;
+  font-weight: 600;
+  color: var(--site-ink);
+}
+
+/* ---------- 代码 ---------- */
+
 .markdown code {
-  padding: 2px 6px;
-  border: 1px solid var(--site-border);
-  border-radius: 6px;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.9em;
   background: var(--site-subtle);
-  color: #b3261e;
+  border: none;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: inherit;
+  overflow-wrap: anywhere;
 }
 
 .markdown pre code {
-  padding: 0;
-  border: 0;
   background: transparent;
-  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  overflow-wrap: normal;
 }
 
-div[class^='codeBlockContainer'] {
-  border: 1px solid var(--site-border);
+/* 注意用 `*=` 不是 `^=`：Docusaurus 的 class 属性以 `language-xxx` 开头，
+   codeBlockContainer 在后面，用 `^=` 匹配不到。 */
+div[class*='codeBlockContainer'] {
+  margin: 32px 0;
+  border: 0.5px solid var(--site-rule);
   border-radius: 12px;
+  background: var(--site-raised);
   box-shadow: none;
 }
 
-/* 表格 */
+div[class*='codeBlockContent'],
+pre[class*='codeBlock'] {
+  background: var(--site-raised) !important;
+  border-radius: 12px;
+}
+
+code[class*='codeBlockLines'] {
+  font-size: 14px;
+  background: transparent;
+}
+
+/* 复制按钮：白底细边，hover 才显形 */
+.theme-code-block button.clean-btn {
+  background: #fff;
+  border: 1px solid var(--site-rule);
+  border-radius: 6px;
+  color: var(--site-muted);
+}
+
+.theme-code-block button.clean-btn:hover {
+  background: var(--site-subtle);
+  border-color: var(--site-hairline);
+  color: #000;
+}
+
+/* ---------- 表格 ---------- */
+
 .markdown table {
-  display: table;
+  display: block;
   width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
   border-collapse: collapse;
+  margin: 32px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.markdown table th,
+.markdown table td {
+  border: 0.5px solid var(--site-rule);
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: top;
 }
 
 .markdown table th {
@@ -247,17 +356,9 @@ div[class^='codeBlockContainer'] {
   color: var(--site-ink);
 }
 
-.markdown table th,
-.markdown table td {
-  border: 1px solid var(--site-border);
-  font-size: 15px;
-}
-
-/* 定义列表（核心概念页用） */
-.markdown dt {
-  margin-top: 20px;
-  font-weight: 600;
-  color: var(--site-ink);
+/* 斑马纹 */
+.markdown table tr:nth-child(even) td {
+  background: var(--site-raised);
 }
 
 /* ---------- 右侧目录 ---------- */
@@ -278,23 +379,45 @@ div[class^='codeBlockContainer'] {
 }
 
 .table-of-contents {
-  font-size: 13px;
+  font-size: 12px;
+  border-left: none;
+  padding-left: 0;
 }
 
 .table-of-contents__link {
+  display: block;
+  padding: 4px 0 4px 12px;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
   color: var(--site-muted);
+  transition: color 0.2s;
 }
 
-.table-of-contents__link:hover,
+.table-of-contents__link:hover {
+  color: #000;
+  text-decoration: none;
+}
+
 .table-of-contents__link--active {
-  color: var(--ifm-color-primary);
+  color: #000;
+  font-weight: 600;
+  border-left-color: #000;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.06), transparent);
+}
+
+/* ---------- 提示块 ---------- */
+
+.theme-admonition {
+  border: 0.5px solid var(--site-rule);
+  border-radius: 12px;
+  box-shadow: none;
 }
 
 /* ---------- 页脚 ---------- */
 
 .footer {
   background: var(--site-canvas);
-  border-top: 1px solid var(--site-border);
+  border-top: 0.5px solid var(--site-border);
   color: var(--site-body);
 }
 
@@ -315,14 +438,7 @@ div[class^='codeBlockContainer'] {
 
 .footer__copyright {
   font-size: 13px;
-  color: var(--site-label);
-}
-
-/* ---------- 提示块 ---------- */
-
-.theme-admonition {
-  border-radius: 12px;
-  border-width: 1px;
+  color: var(--site-muted);
 }
 
 /* ---------- 行内标记 ---------- */
@@ -363,8 +479,52 @@ div[class^='codeBlockContainer'] {
   }
 }
 
-@media (max-width: 996px) {
+/* LeTools 在移动端把字号整体降一档 */
+@media (max-width: 767px) {
   .navbar {
     padding: 0 16px;
+  }
+
+  .markdown h1,
+  .markdown header h1 {
+    font-size: clamp(32px, 10vw, 42px);
+    line-height: 1.12;
+    margin-bottom: 20px;
+  }
+
+  .markdown h2 {
+    font-size: 24px;
+    line-height: 1.25;
+    margin-top: 38px;
+  }
+
+  .markdown h3 {
+    font-size: 20px;
+    line-height: 1.3;
+  }
+
+  .markdown p,
+  .markdown ul,
+  .markdown ol {
+    font-size: 15px;
+  }
+
+  .markdown ul,
+  .markdown ol {
+    margin-left: 1rem;
+  }
+
+  :root:root {
+    --ifm-pre-padding: 18px 16px;
+  }
+
+  code[class*='codeBlockLines'] {
+    font-size: 13px;
+  }
+
+  .markdown table th,
+  .markdown table td {
+    padding: 10px 12px;
+    min-width: 110px;
   }
 }

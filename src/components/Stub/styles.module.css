@@ -1,7 +1,7 @@
 .stub {
   margin: 24px 0 32px;
   padding: 18px 22px;
-  border: 1px dashed var(--site-border);
+  border: 1px dashed var(--site-rule);
   border-left: 3px solid var(--ifm-color-primary);
   border-radius: 12px;
   background: var(--site-subtle);

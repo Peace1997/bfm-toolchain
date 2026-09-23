@@ -10,12 +10,12 @@ description: 控制器切换 CLI、CycloneDDS 安装、有线与 ROS 通信配�
 
 ## 1. 编译控制器切换 CLI
 
-边侧机克隆 `lejulab_platform`，切到 `heft/dev` 分支编译：
+边侧机克隆 `Lejulab_ARM`，切到 `origin/beta` 分支编译：
 
 ```bash
-git clone https://www.lejuhub.com/highlydynamic/lejulab_platform.git
-cd lejulab_platform
-git switch -c heft/dev origin/heft/dev
+git clone https://atomgit.com/OpenLET/Lejulab_ARM.git
+cd Lejulab_ARM
+git switch -c beta origin/beta
 
 conda deactivate          # 请退出 conda 环境后编译。若提示符仍有 (base)，说明没退干净
 mkdir -p build && cd build
@@ -26,14 +26,10 @@ cmake .. -DFORCE_PURE_CMAKE=ON
 make -j$(nproc)
 ```
 
-:::warning 当前仅支持内部仓库克隆
-上面的地址是内部仓库，**外部用户暂时无法访问，敬请期待**。
-:::
-
 可执行文件默认在：
 
 ```text
-lejulab_platform/devel/lib/leju-rl-controller/controller_switch_cli
+Lejulab_ARM/devel/lib/leju-rl-controller/controller_switch_cli
 ```
 
 ### 测试切换
@@ -43,30 +39,30 @@ lejulab_platform/devel/lib/leju-rl-controller/controller_switch_cli
 ```bash
 export ROBOT_VERSION=17
 export CYCLONEDDS_URI="file:///path/to/LeTools-Learning/configs/deploy/cyclonedds_roban_edge.xml"
-export LD_LIBRARY_PATH="/path/to/lejulab_platform/src/lejusdk/3rd_party/x86_64/cyclonedds-cxx-0.10.2/lib:/path/to/lejulab_platform/src/lejusdk/3rd_party/x86_64/cyclonedds-0.10.2/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="/path/to/Lejulab_ARM/src/lejusdk/3rd_party/x86_64/cyclonedds-cxx-0.10.2/lib:/path/to/Lejulab_ARM/src/lejusdk/3rd_party/x86_64/cyclonedds-0.10.2/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
-/path/to/lejulab_platform/devel/lib/leju-rl-controller/controller_switch_cli amp
+/path/to/Lejulab_ARM/devel/lib/leju-rl-controller/controller_switch_cli amp
 ```
 
 成功时会打印 `控制器切换请求已发送: amp`。
 
 ### 填入部署配置
 
-把可执行文件与 CycloneDDS 库路径填入 `configs/deploy/roban_wholebody_deploy.yaml`。按本机安装路径替换 `/path/to/lejulab_platform` 即可，其后的相对路径固定不变：
+把可执行文件与 CycloneDDS 库路径填入 `configs/deploy/roban_wholebody_deploy.yaml`。按本机安装路径替换 `/path/to/Lejulab_ARM` 即可，其后的相对路径固定不变：
 
 ```yaml
 heft:
-  switch_cli: "/path/to/lejulab_platform/devel/lib/leju-rl-controller/controller_switch_cli"
-  switch_library_path: "/path/to/lejulab_platform/src/lejusdk/3rd_party/x86_64/cyclonedds-cxx-0.10.2/lib:/path/to/lejulab_platform/src/lejusdk/3rd_party/x86_64/cyclonedds-0.10.2/lib"
+  switch_cli: "/path/to/Lejulab_ARM/devel/lib/leju-rl-controller/controller_switch_cli"
+  switch_library_path: "/path/to/Lejulab_ARM/src/lejusdk/3rd_party/x86_64/cyclonedds-cxx-0.10.2/lib:/path/to/Lejulab_ARM/src/lejusdk/3rd_party/x86_64/cyclonedds-0.10.2/lib"
 ```
 
 ## 2. 安装 CycloneDDS 0.10.2
 
-pip 没有与下位机匹配的预编译 0.10.2 wheel，需要用 `lejulab_platform` 里的原生库在 `letools` 环境中编译安装：
+pip 没有与下位机匹配的预编译 0.10.2 wheel，需要用 `Lejulab_ARM` 里的原生库在 `letools` 环境中编译安装：
 
 ```bash
 conda activate letools     # 没有就先按 LeTools-Learning 文档新建环境
-export CYCLONEDDS_HOME=/path/to/lejulab_platform/src/lejusdk/3rd_party/x86_64/cyclonedds-0.10.2
+export CYCLONEDDS_HOME=/path/to/Lejulab_ARM/src/lejusdk/3rd_party/x86_64/cyclonedds-0.10.2
 export CMAKE_PREFIX_PATH="${CYCLONEDDS_HOME}${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
 
 mkdir -p /tmp/cyclonedds-python-wheel

@@ -116,7 +116,7 @@ sudo bash src/leju_launch/scripts/launch_teleop_real.sh
 网络配置和 PICO 校准与真机相同，仿真一般用 docker 部署：
 
 ```bash
-cd ~/lejulab_platform/docker
+cd ~/Lejulab_ARM/docker
 ./run.sh
 catkin build
 
@@ -138,7 +138,7 @@ roslaunch leju_launch pico_teleop.launch \
 
 1. 检查按键映射是否正确
 2. 检查是否进行了 `RT + B` 上半身校准
-3. 如果之前运行过 `lejulab_platform`，删除之前编译的 build 目录从头编译：
+3. 如果之前运行过 `Lejulab_ARM`，删除之前编译的 build 目录从头编译：
 
 ```bash
 rm -rf build_cmake build devel installed

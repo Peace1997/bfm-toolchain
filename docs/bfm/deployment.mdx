@@ -14,21 +14,11 @@ description: HEFT 离线轨迹追踪的部署流程、仿真验证与注意事�
 
 ## 部署流程
 
-### 1. 转换轨迹格式
-
-用转换脚本把 sonic csv 格式转成 heft csv 格式（脚本内有使用方法，缺包 `pip install` 即可）。
-
-<Stub>
-
-- `convert_sonic_csv_to_heft.py` 目前是飞书附件，需要放进开源仓库或补上下载地址
-
-</Stub>
-
-### 2. 放置轨迹与策略
+### 1. 放置轨迹与策略
 
 把要测试的轨迹及策略放到对应路径中，确认**参考数据观测未来帧及观测维度与配置文件一致**。
 
-### 3. 启动机器
+### 2. 启动机器
 
 ```bash
 sudo su
@@ -36,7 +26,7 @@ export ROBOT_VERSION=17
 sudo bash src/leju_launch/scripts/launch_real.sh
 ```
 
-### 4. 播放轨迹
+### 3. 播放轨迹
 
 启动后用北通手柄操作：
 
@@ -55,7 +45,7 @@ sudo bash src/leju_launch/scripts/launch_real.sh
 仿真中一般用 docker 启动：
 
 ```bash
-cd ~/lejulab_platform/docker
+cd ~/Lejulab_ARM/docker
 ./run.sh
 catkin build
 source devel/setup.zsh

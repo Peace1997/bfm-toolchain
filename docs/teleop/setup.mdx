@@ -100,17 +100,13 @@ python3.10 --version   # 应显示 3.10.x
 源码位于 [AtomGit 开源仓库](https://atomgit.com/OpenLET/Lejulab_ARM)，最新策略及配置位于 `beta` 分支，Commit `9a064cab36ea026db4696a9c75221dbf75fd1e4c`。
 
 ```bash
-cd lejulab_platform
+git clone https://atomgit.com/OpenLET/Lejulab_ARM.git
+cd Lejulab_ARM
+git switch -c beta origin/beta
+
 sudo su
 PICO_GMR_PYTHON=python3.10 bash src/leju_launch/scripts/setup_pico_gmr_env.sh
 ```
-
-<Stub>
-
-- 原文档的 clone 地址指向内部 GitLab，公开站点需要改为开源仓库地址，此处已省略
-- 确认开源仓库与内部仓库的对应关系
-
-</Stub>
 
 ### 编译
 

@@ -4,7 +4,8 @@ import Layout from '@theme/Layout';
 import {useRef, useState, type ReactNode} from 'react';
 import styles from './index.module.css';
 
-const TECH_DOC = 'https://bcn9fa1lvktb.feishu.cn/wiki/K57twvuDKiiAxZk8oJxcj0xJnXc';
+const TECH_DOC = '/docs/overview/intro';
+const OPENSOURCE_URL = 'https://atomgit.com/OpenLET/Lejulab_ARM';
 const pillars = [
   {
     id: 'model', title: '通用运控基模', brief: '一个模型，覆盖多种动作',
@@ -16,13 +17,13 @@ const pillars = [
     id: 'teleop', title: '全身遥操系统', brief: '复杂场景，全身动作实时跟随',
     desc: '全身多关节协调与姿态自适应跟踪，低时延复制示范动作，无需额外训练。',
     detail: '全姿态跟踪 · 免训练动作学习',
-    doc: '/docs/practices/teleoperation', time: 55,
+    doc: '/docs/teleop/intro', time: 55,
   },
   {
     id: 'training', title: '整机数采训练', brief: '四步打通数据采集到真机作业',
     desc: '将遥操示范转化为可训练数据，完成操作技能模型训练与真机作业验证。',
     detail: '采集 → 处理 → 训练 → 部署',
-    doc: '/docs/post-training/intro', time: 100,
+    doc: '/docs/training/intro', time: 100,
   },
   {
     id: 'dataset', title: '开源真机数据集', brief: '海量全身动作与操作任务数据',
@@ -57,7 +58,7 @@ export default function Home(): ReactNode {
           <p className={styles.subtitle}>全身运控开箱即用，打通遥操数采、技能训练与真机部署。</p>
           <div className={styles.actions}>
             <button className={styles.primary} onClick={() => watch()}>▷ 观看发布视频</button>
-            <a href={TECH_DOC} target="_blank" rel="noopener noreferrer">飞书技术文档 ↗</a>
+            <Link to={TECH_DOC}>技术文档 →</Link>
           </div>
           <nav className={styles.heroModules} aria-label="四项核心能力">
             {pillars.map(pillar => (
@@ -87,7 +88,7 @@ export default function Home(): ReactNode {
             </section>
           ))}
         </div>
-        <footer className={styles.footer}><span>BFMTools · 乐聚机器人</span><span>站内说明持续完善中，技术细节请参阅<a href={TECH_DOC} target="_blank" rel="noopener noreferrer">飞书文档 ↗</a></span></footer>
+        <footer className={styles.footer}><span>BFMTools · 乐聚机器人</span><span>站内说明持续完善中，源码见<a href={OPENSOURCE_URL} target="_blank" rel="noopener noreferrer">开源仓库 ↗</a></span></footer>
 
         <dialog ref={dialog} className={styles.dialog} aria-labelledby="video-title" onClose={() => video.current?.pause()} onClick={event => {if (event.target === event.currentTarget) dialog.current?.close();}}>
           <div className={styles.player}>

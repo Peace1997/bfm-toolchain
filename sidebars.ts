@@ -1,137 +1,73 @@
 import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 
 /**
- * 五条侧边栏，对应顶栏的五个入口。
- * 工具链主线（部署 / 数据集 / 后训练）合并在 `toolchain` 一条里，
- * 这样用户在三者之间跳转时不会丢失上下文。
+ * 单一侧边栏，结构对齐首页的四个模块。
+ * 分类都设为 collapsible: false，渲染成扁平分组标题。
  */
 const sidebars: SidebarsConfig = {
-  quickstart: [
+  docs: [
     {
       type: 'category',
       label: '概览',
       collapsed: false,
-      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
       collapsible: false,
-      items: [
-        'overview/intro',
-        'overview/architecture',
-        'overview/concepts',
-        'overview/roadmap',
-      ],
+      items: ['overview/intro', 'overview/architecture', 'overview/concepts'],
     },
     {
       type: 'category',
-      label: '快速开始',
+      label: '通用运控基模',
       collapsed: false,
-      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
-      collapsible: false,
-      items: [
-        'quickstart/intro',
-        'quickstart/environment',
-        'quickstart/installation',
-        'quickstart/first-rollout',
-        'quickstart/first-skill',
-      ],
-    },
-  ],
-
-  bfm: [
-    {
-      type: 'category',
-      label: 'BFM 模型',
-      collapsed: false,
-      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
       collapsible: false,
       items: [
         'bfm/intro',
-        'bfm/architecture',
-        'bfm/io-spec',
+        'bfm/action-library',
+        'bfm/deployment',
         'bfm/capabilities',
-        'bfm/versions',
       ],
     },
-  ],
-
-  toolchain: [
     {
       type: 'category',
-      label: '模型部署',
+      label: '全身遥操系统',
       collapsed: false,
-      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
       collapsible: false,
       items: [
-        'deployment/intro',
-        'deployment/runtime',
-        'deployment/sim',
-        'deployment/real',
-        'deployment/performance',
-        'deployment/safety',
+        'teleop/intro',
+        'teleop/tracking',
+        'teleop/imitation',
+        'teleop/setup',
       ],
     },
     {
       type: 'category',
-      label: '数据集',
+      label: '整机数采训练',
       collapsed: false,
-      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
+      collapsible: false,
+      items: [
+        'training/intro',
+        'training/collect',
+        'training/process',
+        'training/train',
+        'training/deploy',
+      ],
+    },
+    {
+      type: 'category',
+      label: '开源真机数据集',
+      collapsed: false,
       collapsible: false,
       items: [
         'datasets/intro',
+        'datasets/openlet',
+        'datasets/scenarios',
         'datasets/format',
-        'datasets/collection',
-        'datasets/processing',
-        'datasets/registry',
       ],
     },
-    {
-      type: 'category',
-      label: '技能后训练',
-      collapsed: false,
-      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
-      collapsible: false,
-      items: [
-        'post-training/intro',
-        'post-training/pipeline',
-        'post-training/finetune',
-        'post-training/rl',
-        'post-training/evaluation',
-        'post-training/sim2real',
-      ],
-    },
-  ],
-
-  practices: [
-    {
-      type: 'category',
-      label: '技能实践',
-      collapsed: false,
-      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
-      collapsible: false,
-      items: [
-        'practices/intro',
-        'practices/locomotion',
-        'practices/manipulation',
-        'practices/teleoperation',
-        'practices/whole-body',
-      ],
-    },
-  ],
-
-  reference: [
     {
       type: 'category',
       label: '参考',
       collapsed: false,
-      // 不可折叠：分组只作标题用，渲染成 LeTools 那种小号大写灰字
       collapsible: false,
-      items: [
-        'reference/cli',
-        'reference/python-api',
-        'reference/config',
-        'reference/hardware',
-        'reference/troubleshooting',
-        'reference/faq',
-      ],
+      items: ['reference/faq', 'reference/troubleshooting'],
     },
   ],
 };

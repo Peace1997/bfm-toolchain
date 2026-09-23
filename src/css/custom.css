@@ -100,8 +100,11 @@ body {
   background: var(--site-canvas);
 }
 
+/* 侧栏容器被 Docusaurus 设了 margin-top:-80px，靠 .sidebar 的
+   padding-top:var(--ifm-navbar-height) 补偿。这里必须在导航高度之上再加留白，
+   直接写死数值会把补偿覆盖掉，内容就被压到顶栏底下了。 */
 .theme-doc-sidebar-container > div > div {
-  padding: 40px 24px;
+  padding: calc(var(--ifm-navbar-height) + 32px) 24px 40px;
 }
 
 .menu__link {

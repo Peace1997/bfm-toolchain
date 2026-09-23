@@ -94,13 +94,17 @@ npm run build && npm run serve -- --host 0.0.0.0 --port 3210
 访问地址是 `http://<本机IP>:3210/bfm-toolchain/`。注意它**没有任何鉴权**，
 凡是能连到这个网段的人都能看——真实参数填进来之后要重新考虑分享方式。
 
-## 部署到 GitHub Pages（暂未启用）
+## 部署
 
-[`.github/workflows/`](.github/workflows/) 里的两个工作流已经写好但还没接远程仓库：
-`deploy.yml` 推 `main` 自动构建发布，`build-check.yml` 对 PR 只跑构建检查。
+站点已上线：**<https://peace1997.github.io/bfm-toolchain/>**
 
-真要启用时，除了填上面的 `GITHUB_ORG` / `REPO_NAME`，还需要在仓库里把
-**Settings → Pages → Source** 选成 **GitHub Actions**。
+推送到 `main` 即自动构建发布，工作流见 [`deploy.yml`](.github/workflows/deploy.yml)；
+PR 只跑构建检查不部署，见 [`build-check.yml`](.github/workflows/build-check.yml)。
+构建会因死链或 MDX 语法错误失败，所以本地 `npm run build` 通过再推。
+
+> [!NOTE]
+> 当前挂在个人账号下，属于过渡状态。迁到正式组织时改
+> `docusaurus.config.ts` 顶部的 `GITHUB_ORG`，并在新仓库重新启用 Pages。
 
 > [!IMPORTANT]
 > `baseUrl` 必须与仓库名一致（`/<REPO_NAME>/`），否则 CSS 和路由会 404。

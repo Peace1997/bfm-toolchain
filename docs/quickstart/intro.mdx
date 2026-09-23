@@ -1,0 +1,60 @@
+---
+sidebar_position: 1
+title: 快速开始
+sidebar_label: 选择路径
+description: 按目标选一条路径，最快在仿真里看到机器人动起来。
+---
+
+# 快速开始
+
+不用通读全部文档。先想清楚你要做什么，然后走对应的那条路。
+
+<Stub>
+
+- 每条路径补上实测耗时
+- 提供一份可直接下载的示例数据与权重，让新人不依赖内网也能跑通
+
+</Stub>
+
+## 三条路径
+
+### A. 我只想先看看效果 <span className="badge-sim">仿真</span>
+
+不训练、不碰真机，用现成权重在仿真里跑一遍。
+
+1. [环境与依赖](/docs/quickstart/environment)
+2. [安装工具链](/docs/quickstart/installation)
+3. [跑通第一次推理](/docs/quickstart/first-rollout)
+
+### B. 我要训一个自己的技能
+
+在现成数据上做一次完整的后训练，产出一个可部署的策略。
+
+1. 先完成路径 A
+2. [训练第一个技能](/docs/quickstart/first-skill)
+3. 深入 → [技能后训练](/docs/post-training/intro)
+
+### C. 我要部署到真机 <span className="badge-real">真机</span>
+
+:::danger 先读安全页
+真机上电前必须先读 [安全边界](/docs/deployment/safety)，并确认急停可用。
+:::
+
+1. 先完成路径 A，确认仿真链路无误
+2. [真机部署](/docs/deployment/real)
+3. [时延与性能](/docs/deployment/performance)
+
+## 预期耗时
+
+| 步骤 | 预计耗时 |
+| --- | --- |
+| 环境准备 | <span className="badge-todo">待补充</span> |
+| 安装工具链 | <span className="badge-todo">待补充</span> |
+| 首次推理 | <span className="badge-todo">待补充</span> |
+| 首次后训练 | <span className="badge-todo">待补充</span> |
+
+## 卡住了
+
+- 装不上 / 跑不起来 → [故障排查](/docs/reference/troubleshooting)
+- 术语看不懂 → [核心概念](/docs/overview/concepts)
+- 想知道整体是怎么回事 → [整体架构](/docs/overview/architecture)

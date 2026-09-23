@@ -1,0 +1,46 @@
+.stub {
+  margin: 24px 0 32px;
+  padding: 18px 22px;
+  border: 1px dashed var(--site-border);
+  border-left: 3px solid var(--ifm-color-primary);
+  border-radius: 12px;
+  background: var(--site-panel);
+}
+
+.head {
+  margin: 0 0 10px;
+  font-size: 0.9375rem;
+  color: var(--site-ink);
+}
+
+.badge {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--ifm-color-primary);
+  color: #10243a;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.owner {
+  margin-left: 10px;
+  font-size: 0.8125rem;
+  color: var(--site-muted);
+}
+
+.body {
+  font-size: 0.9375rem;
+  color: var(--site-muted);
+}
+
+.body ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.body p:last-child,
+.body ul:last-child {
+  margin-bottom: 0;
+}

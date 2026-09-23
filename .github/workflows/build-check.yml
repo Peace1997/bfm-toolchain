@@ -1,0 +1,19 @@
+name: 构建检查
+
+# PR 只构建、不部署。死链和 MDX 语法错误会让构建失败，
+# 在合并前就能拦住。
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
